@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Sign In — Bloom Wellness</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>"/>
+  <meta name="theme-color" content="#ec4899"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="auth.css"/>
+</head>
+<body>
+
+  <!-- Animated background -->
+  <div class="auth-bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <div class="auth-page">
+
+    <!-- Left panel — branding -->
+    <div class="auth-left">
+      <a href="index.html" class="auth-logo">
+        <span class="logo-flower">🌸</span>
+        <span class="logo-name">Bloom</span>
+      </a>
+      <div class="auth-left-content">
+        <h1>Your wellness<br/><em>journey awaits</em></h1>
+        <p>Track your health, understand your body, and bloom into your best self — every single day.</p>
+        <div class="auth-features">
+          <div class="af-item"><span class="af-icon">🏃‍♀️</span><span>Fitness & activity tracking</span></div>
+          <div class="af-item"><span class="af-icon">🧠</span><span>Mental wellness & mood logs</span></div>
+          <div class="af-item"><span class="af-icon">🌙</span><span>Hormonal & cycle health</span></div>
+          <div class="af-item"><span class="af-icon">🤖</span><span>AI-powered wellness coach</span></div>
+          <div class="af-item"><span class="af-icon">🥗</span><span>Nutrition & hydration tracker</span></div>
+        </div>
+        <div class="auth-trust">
+          <div class="at-item"><strong>50,000+</strong><span>Women empowered</span></div>
+          <div class="at-div"></div>
+          <div class="at-item"><strong>98%</strong><span>Feel healthier</span></div>
+          <div class="at-div"></div>
+          <div class="at-item"><strong>Free</strong><span>Always & forever</span></div>
+        </div>
+      </div>
+      <div class="auth-left-quote">
+        <blockquote id="rotating-quote">"She believed she could, so she did."</blockquote>
+      </div>
+    </div>
+
+    <!-- Right panel — form -->
+    <div class="auth-right">
+      <div class="auth-form-wrap">
+
+        <div class="auth-form-header">
+          <h2>Welcome back 💜</h2>
+          <p>Sign in to your Bloom account</p>
+        </div>
+
+        <!-- Error banner -->
+        <div id="login-error" class="auth-alert auth-alert-error hidden">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="login-error-msg">Invalid email or password.</span>
+        </div>
+
+        <!-- Success banner -->
+        <div id="login-success" class="auth-alert auth-alert-success hidden">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Signed in! Redirecting to your dashboard...</span>
+        </div>
+
+        <form id="login-form" onsubmit="doLogin(event)" novalidate>
+
+          <div class="field-group">
+            <label for="email">Email address</label>
+            <div class="field-wrap">
+              <i class="fa-solid fa-envelope field-icon"></i>
+              <input type="email" id="email" name="email" placeholder="your@email.com"
+                     autocomplete="email" required/>
+            </div>
+            <span class="field-error" id="email-err"></span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label for="password">Password</label>
+              <a href="forgot.html" class="forgot-link">Forgot password?</a>
+            </div>
+            <div class="field-wrap">
+              <i class="fa-solid fa-lock field-icon"></i>
+              <input type="password" id="password" name="password" placeholder="Enter your password"
+                     autocomplete="current-password" required/>
+              <button type="button" class="pw-eye" onclick="toggleEye('password', this)" aria-label="Show password">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+            <span class="field-error" id="password-err"></span>
+          </div>
+
+          <div class="field-row-check">
+            <label class="check-label">
+              <input type="checkbox" id="remember"/> Keep me signed in
+            </label>
+          </div>
+
+          <button type="submit" class="btn-auth" id="login-btn">
+            <span id="login-btn-text">Sign In</span>
+            <span id="login-spinner" class="btn-spinner hidden"></span>
+          </button>
+
+        </form>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <div class="quick-access-row">
+          <button class="btn-quick" onclick="demoLogin()">
+            <span>🌸</span> Try Demo Account
+          </button>
+          <button class="btn-quick" onclick="guestLogin()">
+            <span>👤</span> Continue as Guest
+          </button>
+        </div>
+
+        <p class="auth-switch-text">
+          Don't have an account?
+          <a href="signup.html" class="auth-switch-link">Create one free →</a>
+        </p>
+
+        <p class="auth-disclaimer">
+          By signing in you agree to our
+          <a href="#" onclick="showTermsModal()">Terms of Service</a> and
+          <a href="#" onclick="showTermsModal()">Privacy Policy</a>.
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms Modal -->
+  <div id="terms-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <button class="modal-close" onclick="hideTermsModal()">✕</button>
+      <h3>Terms &amp; Privacy</h3>
+      <div class="modal-scroll">
+        <h4>Terms of Service</h4>
+        <p>Bloom is a free wellness education and tracking platform. By using Bloom you agree that you are 16 or older, the information provided is for educational purposes only and not a substitute for medical advice, and you will consult a qualified healthcare provider for medical decisions.</p>
+        <h4>Privacy Policy</h4>
+        <ul>
+          <li><strong>Local storage only:</strong> All your health data stays on your device and is never sent to any server.</li>
+          <li><strong>No tracking:</strong> We do not use analytics, cookies, or tracking pixels.</li>
+          <li><strong>AI data:</strong> When using the AI Coach, your message goes directly to OpenAI via your own API key — Bloom never sees it.</li>
+          <li><strong>Account data:</strong> Your name, email, and hashed password are stored only in your browser's localStorage.</li>
+          <li><strong>No sharing:</strong> We never sell, share, or transmit your personal data to any third party.</li>
+        </ul>
+        <p>You can delete all your data at any time by clearing your browser's localStorage.</p>
+      </div>
+      <button class="btn-auth" onclick="hideTermsModal()">Got it</button>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>

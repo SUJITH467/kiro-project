@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Create Account — Bloom Wellness</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>"/>
+  <meta name="theme-color" content="#ec4899"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="auth.css"/>
+</head>
+<body>
+
+  <div class="auth-bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+  </div>
+
+  <div class="auth-page">
+
+    <!-- Left panel -->
+    <div class="auth-left">
+      <a href="index.html" class="auth-logo">
+        <span class="logo-flower">🌸</span>
+        <span class="logo-name">Bloom</span>
+      </a>
+      <div class="auth-left-content">
+        <h1>Start your<br/><em>wellness journey</em></h1>
+        <p>Join thousands of women who are taking control of their health — one day at a time.</p>
+        <div class="auth-steps">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div><strong>Create your account</strong><p>Free forever, no credit card needed</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div><strong>Set your wellness goals</strong><p>Personalized to your life stage</p></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div><strong>Start tracking & blooming</strong><p>See results in as little as 7 days</p></div>
+          </div>
+        </div>
+        <div class="auth-testimonial">
+          <div class="test-avatar">👩</div>
+          <div>
+            <p class="test-quote">"Bloom helped me understand my PCOS and finally feel in control of my health. I wish I'd found it sooner."</p>
+            <span class="test-name">— Priya K., 31</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right panel — signup form -->
+    <div class="auth-right auth-right-scroll">
+      <div class="auth-form-wrap">
+
+        <div class="auth-form-header">
+          <h2>Create your account 🌸</h2>
+          <p>It's free, private, and takes 60 seconds</p>
+        </div>
+
+        <!-- Progress steps -->
+        <div class="signup-progress" id="signup-progress">
+          <div class="sp-step active" id="sp-1"><span>1</span> Personal</div>
+          <div class="sp-line"></div>
+          <div class="sp-step" id="sp-2"><span>2</span> Goals</div>
+          <div class="sp-line"></div>
+          <div class="sp-step" id="sp-3"><span>3</span> Security</div>
+        </div>
+
+        <!-- Error / Success banners -->
+        <div id="signup-error" class="auth-alert auth-alert-error hidden">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="signup-error-msg">Please fix the errors below.</span>
+        </div>
+        <div id="signup-success" class="auth-alert auth-alert-success hidden">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Account created! Redirecting to your dashboard...</span>
+        </div>
+
+        <form id="signup-form" onsubmit="doSignup(event)" novalidate>
+
+          <!-- ===== STEP 1: Personal ===== -->
+          <div class="signup-step" id="step-1">
+            <div class="field-row-2">
+              <div class="field-group">
+                <label for="fname">First Name <span class="req">*</span></label>
+                <div class="field-wrap">
+                  <i class="fa-solid fa-user field-icon"></i>
+                  <input type="text" id="fname" placeholder="e.g. Sarah" autocomplete="given-name" required/>
+                </div>
+                <span class="field-error" id="fname-err"></span>
+              </div>
+              <div class="field-group">
+                <label for="lname">Last Name <span class="req">*</span></label>
+                <div class="field-wrap">
+                  <i class="fa-solid fa-user field-icon"></i>
+                  <input type="text" id="lname" placeholder="e.g. Johnson" autocomplete="family-name" required/>
+                </div>
+                <span class="field-error" id="lname-err"></span>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="su-email">Email Address <span class="req">*</span></label>
+              <div class="field-wrap">
+                <i class="fa-solid fa-envelope field-icon"></i>
+                <input type="email" id="su-email" placeholder="your@email.com" autocomplete="email" required/>
+              </div>
+              <span class="field-error" id="su-email-err"></span>
+            </div>
+
+            <div class="field-group">
+              <label for="age-group">Age Group <span class="req">*</span></label>
+              <div class="field-wrap">
+                <i class="fa-solid fa-calendar field-icon"></i>
+                <select id="age-group" required>
+                  <option value="">Select your age group...</option>
+                  <option value="18-24">18–24</option>
+                  <option value="25-34">25–34</option>
+                  <option value="35-44">35–44</option>
+                  <option value="45-54">45–54</option>
+                  <option value="55+">55+</option>
+                </select>
+              </div>
+              <span class="field-error" id="age-err"></span>
+            </div>
+
+            <div class="field-group">
+              <label for="location">Location <span class="optional-tag">(optional)</span></label>
+              <div class="field-wrap">
+                <i class="fa-solid fa-location-dot field-icon"></i>
+                <input type="text" id="location" placeholder="e.g. New York, USA" autocomplete="country-name"/>
+              </div>
+            </div>
+
+            <button type="button" class="btn-auth" onclick="nextStep(1)">
+              Continue <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <!-- ===== STEP 2: Goals ===== -->
+          <div class="signup-step hidden" id="step-2">
+            <div class="field-group">
+              <label>Primary Wellness Goal <span class="req">*</span></label>
+              <div class="goal-grid" id="goal-grid">
+                <button type="button" class="goal-btn" data-val="Improve fitness & activity"     onclick="selectGoal(this)"><span>🏃‍♀️</span> Fitness</button>
+                <button type="button" class="goal-btn" data-val="Manage stress & mental health"  onclick="selectGoal(this)"><span>🧠</span> Mental Health</button>
+                <button type="button" class="goal-btn" data-val="Understand hormonal health"     onclick="selectGoal(this)"><span>🌙</span> Hormones</button>
+                <button type="button" class="goal-btn" data-val="Track nutrition & hydration"    onclick="selectGoal(this)"><span>🥗</span> Nutrition</button>
+                <button type="button" class="goal-btn" data-val="Manage PCOS"                    onclick="selectGoal(this)"><span>🔬</span> PCOS</button>
+                <button type="button" class="goal-btn" data-val="Pregnancy wellness"             onclick="selectGoal(this)"><span>🤱</span> Pregnancy</button>
+                <button type="button" class="goal-btn" data-val="Navigate menopause"             onclick="selectGoal(this)"><span>🌺</span> Menopause</button>
+                <button type="button" class="goal-btn" data-val="General self-care"              onclick="selectGoal(this)"><span>🌸</span> Self-Care</button>
+              </div>
+              <span class="field-error" id="goal-err"></span>
+            </div>
+
+            <div class="field-group">
+              <label for="health-conditions">Any health conditions? <span class="optional-tag">(optional)</span></label>
+              <div class="field-wrap">
+                <i class="fa-solid fa-notes-medical field-icon"></i>
+                <input type="text" id="health-conditions" placeholder="e.g. PCOS, thyroid, anxiety (helps personalize AI advice)"/>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="activity-level">Current Activity Level <span class="req">*</span></label>
+              <div class="field-wrap">
+                <i class="fa-solid fa-heart-pulse field-icon"></i>
+                <select id="activity-level" required>
+                  <option value="">How active are you currently?</option>
+                  <option value="sedentary">Sedentary (mostly sitting)</option>
+                  <option value="light">Lightly active (1–2 days/week)</option>
+                  <option value="moderate">Moderately active (3–4 days/week)</option>
+                  <option value="active">Very active (5+ days/week)</option>
+                </select>
+              </div>
+              <span class="field-error" id="activity-err"></span>
+            </div>
+
+            <div class="step-nav">
+              <button type="button" class="btn-auth-outline" onclick="prevStep(2)">
+                <i class="fa-solid fa-arrow-left"></i> Back
+              </button>
+              <button type="button" class="btn-auth" onclick="nextStep(2)">
+                Continue <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- ===== STEP 3: Security ===== -->
+          <div class="signup-step hidden" id="step-3">
+            <div class="field-group">
+              <label for="su-password">Password <span class="req">*</span></label>
+              <div class="field-wrap">
+                <i class="fa-solid fa-lock field-icon"></i>
+                <input type="password" id="su-password" placeholder="Min. 8 characters"
+                       autocomplete="new-password" oninput="checkStrength(this.value)" required/>
+                <button type="button" class="pw-eye" onclick="toggleEye('su-password', this)" aria-label="Show password">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+              <div class="pw-strength-wrap">
+                <div class="pw-bars">
+                  <div class="pw-seg" id="seg1"></div>
+                  <div class="pw-seg" id="seg2"></div>
+                  <div class="pw-seg" id="seg3"></div>
+                  <div class="pw-seg" id="seg4"></div>
+                </div>
+                <span class="pw-strength-label" id="pw-strength-label">Enter a password</span>
+              </div>
+              <div class="pw-rules" id="pw-rules">
+                <div class="pw-rule" id="rule-len"><i class="fa-solid fa-circle"></i> At least 8 characters</div>
+                <div class="pw-rule" id="rule-upper"><i class="fa-solid fa-circle"></i> One uppercase letter</div>
+                <div class="pw-rule" id="rule-num"><i class="fa-solid fa-circle"></i> One number</div>
+                <div class="pw-rule" id="rule-special"><i class="fa-solid fa-circle"></i> One special character</div>
+              </div>
+              <span class="field-error" id="su-pw-err"></span>
+            </div>
+
+            <div class="field-group">
+              <label for="su-confirm">Confirm Password <span class="req">*</span></label>
+              <div class="field-wrap">
+                <i class="fa-solid fa-lock field-icon"></i>
+                <input type="password" id="su-confirm" placeholder="Repeat your password"
+                       autocomplete="new-password" oninput="checkMatch()" required/>
+                <button type="button" class="pw-eye" onclick="toggleEye('su-confirm', this)" aria-label="Show password">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+              <span class="field-error" id="confirm-err"></span>
+            </div>
+
+            <label class="check-label terms-check">
+              <input type="checkbox" id="agree-terms" required/>
+              I agree to the <a href="#" onclick="showTermsModal(event)">Terms of Service</a>
+              and <a href="#" onclick="showTermsModal(event)">Privacy Policy</a>
+            </label>
+            <span class="field-error" id="terms-err"></span>
+
+            <label class="check-label">
+              <input type="checkbox" id="marketing-opt"/>
+              Send me weekly wellness tips &amp; updates (optional)
+            </label>
+
+            <div class="step-nav">
+              <button type="button" class="btn-auth-outline" onclick="prevStep(3)">
+                <i class="fa-solid fa-arrow-left"></i> Back
+              </button>
+              <button type="submit" class="btn-auth" id="signup-btn">
+                <span id="signup-btn-text"><i class="fa-solid fa-user-plus"></i> Create My Account</span>
+                <span id="signup-spinner" class="btn-spinner hidden"></span>
+              </button>
+            </div>
+          </div>
+
+        </form>
+
+        <p class="auth-switch-text">
+          Already have an account?
+          <a href="login.html" class="auth-switch-link">Sign in →</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms Modal -->
+  <div id="terms-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <button class="modal-close" onclick="hideTermsModal()">✕</button>
+      <h3>Terms &amp; Privacy</h3>
+      <div class="modal-scroll">
+        <h4>Terms of Service</h4>
+        <p>Bloom is a free wellness education and tracking platform. By creating an account you agree that you are 16 or older, the information is educational not medical advice, and you will consult a healthcare provider for medical decisions.</p>
+        <h4>Privacy Policy</h4>
+        <ul>
+          <li><strong>Local storage only:</strong> All health data stays on your device</li>
+          <li><strong>No tracking:</strong> No analytics, cookies, or tracking pixels</li>
+          <li><strong>AI data:</strong> Messages go directly to OpenAI via your own key</li>
+          <li><strong>No sharing:</strong> We never sell or share your personal data</li>
+        </ul>
+      </div>
+      <button class="btn-auth" onclick="hideTermsModal()">I Understand</button>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>

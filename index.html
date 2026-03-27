@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Bloom — Women's Health & Wellness</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>"/>
+  <meta name="theme-color" content="#ec4899"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- PRELOADER_PLACEHOLDER -->
+
+<!-- ===== CURSOR ===== -->
+<div class="cursor-dot" id="cursor-dot"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- ===== REMINDER POPUP ===== -->
+<div id="reminder-popup" class="popup-overlay" role="dialog" aria-modal="true">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <div class="popup-emoji">🌸</div>
+    <h3>Good day, beautiful!</h3>
+    <p id="reminder-text">You deserve to feel your best today. Take a moment for yourself.</p>
+    <button class="btn-bloom" onclick="closePopup()">Begin My Day ✨</button>
+  </div>
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <a class="nav-brand" href="#hero">
+    <span class="brand-flower">🌸</span>
+    <span class="brand-name">Bloom</span>
+  </a>
+  <ul class="nav-links" id="nav-links">
+    <li><a class="nav-link" href="#hero"      onclick="smoothNav('hero')">Home</a></li>
+    <li><a class="nav-link" href="#fitness"   onclick="smoothNav('fitness')">Fitness</a></li>
+    <li><a class="nav-link" href="#mental"    onclick="smoothNav('mental')">Mental</a></li>
+    <li><a class="nav-link" href="#hormonal"  onclick="smoothNav('hormonal')">Women's Health</a></li>
+    <li><a class="nav-link" href="#nutrition" onclick="smoothNav('nutrition')">Nutrition</a></li>
+    <li><a class="nav-link" href="#tracker"   onclick="smoothNav('tracker')">Tracker</a></li>
+    <li><a class="nav-link" href="#dashboard" onclick="smoothNav('dashboard')">Dashboard</a></li>
+    <li><a class="nav-link" href="#feed"      onclick="smoothNav('feed')">Feed</a></li>
+    <li><a class="nav-link nav-ai-link" href="#aichat" onclick="smoothNav('aichat')">🤖 AI Coach</a></li>
+    <li><a class="nav-link" href="#helpdesk" onclick="smoothNav('helpdesk')">Help</a></li>
+    <li><a class="nav-link" href="#feedback" onclick="smoothNav('feedback')">Feedback</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="dark-toggle" id="dark-btn" onclick="toggleDark()" aria-label="Toggle dark mode">�</button>
+    <button class="btn-bloom btn-sm" onclick="smoothNav('tracker')">Start Tracking</button>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero" class="hero-section">
+  <div class="hero-bg">
+    <div class="hero-orb orb-a"></div>
+    <div class="hero-orb orb-b"></div>
+    <div class="hero-orb orb-c"></div>
+    <div class="hero-particles" id="particles"></div>
+  </div>
+  <div class="hero-content reveal">
+    <div class="hero-eyebrow">✨ Your Wellness Journey Starts Here</div>
+    <h1 class="hero-title">
+      Nurture Your Body,<br/>
+      <em>Empower Your Mind</em>
+    </h1>
+    <p class="hero-desc">A complete wellness platform designed exclusively for women — track your health, understand your body, and bloom into your best self every single day.</p>
+    <div class="hero-cta">
+      <button class="btn-bloom btn-lg" onclick="smoothNav('tracker')">
+        <span>Start Your Journey</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+      <button class="btn-outline-bloom btn-lg" onclick="smoothNav('fitness')">
+        Explore Features
+      </button>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item"><span class="trust-num" data-target="50000">0</span><span>+</span><span class="trust-label">Women Empowered</span></div>
+      <div class="trust-divider"></div>
+      <div class="trust-item"><span class="trust-num" data-target="98">0</span><span>%</span><span class="trust-label">Feel Healthier</span></div>
+      <div class="trust-divider"></div>
+      <div class="trust-item"><span class="trust-num" data-target="7">0</span><span></span><span class="trust-label">Wellness Pillars</span></div>
+    </div>
+  </div>
+  <div class="hero-visual reveal-right">
+    <div class="hero-card-float card-float-1">
+      <span>�‍♀️</span>
+      <div><strong>Daily Steps</strong><small>8,432 today</small></div>
+    </div>
+    <div class="hero-card-float card-float-2">
+      <span>💧</span>
+      <div><strong>Hydration</strong><small>6 of 8 glasses</small></div>
+    </div>
+    <div class="hero-card-float card-float-3">
+      <span>🧘‍♀️</span>
+      <div><strong>Mindfulness</strong><small>10 min today</small></div>
+    </div>
+    <div class="hero-circle-wrap">
+      <div class="hero-circle">
+        <div class="hc-inner">
+          <span class="hc-emoji">🌸</span>
+          <span class="hc-text">Bloom</span>
+          <span class="hc-sub">Wellness Score</span>
+          <span class="hc-score" id="hero-score">--</span>
+        </div>
+        <svg class="hc-ring" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="88" class="hc-ring-bg"/>
+          <circle cx="100" cy="100" r="88" class="hc-ring-fill" id="hero-ring" stroke-dasharray="0 553"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Scroll to explore</span>
+    <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+  </div>
+</section>
+
+<!-- ===== QUOTE TICKER ===== -->
+<div class="quote-ticker">
+  <div class="ticker-track" id="ticker-track">
+    <span>🌸 "She believed she could, so she did."</span>
+    <span>💜 "Your body is your home — take care of it."</span>
+    <span>✨ "Self-care is not selfish. You cannot pour from an empty cup."</span>
+    <span>🌿 "Health is the greatest gift you can give yourself."</span>
+    <span>💪 "Strong women lift each other up."</span>
+    <span>🌸 "She believed she could, so she did."</span>
+    <span>💜 "Your body is your home — take care of it."</span>
+    <span>✨ "Self-care is not selfish. You cannot pour from an empty cup."</span>
+    <span>🌿 "Health is the greatest gift you can give yourself."</span>
+    <span>💪 "Strong women lift each other up."</span>
+  </div>
+</div>
+
+<!-- ===== WHO THIS WORKS FOR ===== -->
+<section id="who-its-for" class="section-block wif-section">
+  <div class="container">
+    <div class="section-label reveal">Made For You</div>
+    <h2 class="section-title reveal">Who Bloom Is<br/><em>Designed For</em></h2>
+    <p class="section-desc reveal">Bloom is built for every woman at every stage of life. Whether you're just starting your wellness journey or looking to go deeper — this platform meets you exactly where you are.</p>
+
+    <!-- Primary Audience Cards -->
+    <div class="wif-grid reveal">
+      <div class="wif-card" style="--wc:linear-gradient(135deg,#fce7f3,#ede9fe)">
+        <div class="wif-icon">👩‍🎓</div>
+        <h3>Young Women (18–30)</h3>
+        <p class="wif-desc">Building healthy habits early, understanding your cycle, managing stress from work or studies, and establishing a strong wellness foundation for life.</p>
+        <ul class="wif-list">
+          <li><i class="fa-solid fa-check"></i> Cycle tracking & education</li>
+          <li><i class="fa-solid fa-check"></i> Stress & anxiety management</li>
+          <li><i class="fa-solid fa-check"></i> Fitness routines for beginners</li>
+          <li><i class="fa-solid fa-check"></i> Nutrition for energy & focus</li>
+        </ul>
+        <div class="wif-tag">Perfect fit ✨</div>
+      </div>
+
+      <div class="wif-card" style="--wc:linear-gradient(135deg,#fff7ed,#fce7f3)">
+        <div class="wif-icon">👩‍💼</div>
+        <h3>Busy Professionals (30–45)</h3>
+        <p class="wif-desc">Balancing career, family, and self-care. Managing hormonal changes, preventing burnout, and finding sustainable wellness routines that fit a packed schedule.</p>
+        <ul class="wif-list">
+          <li><i class="fa-solid fa-check"></i> Quick daily tracking (under 2 min)</li>
+          <li><i class="fa-solid fa-check"></i> Hormonal balance guidance</li>
+          <li><i class="fa-solid fa-check"></i> Burnout prevention strategies</li>
+          <li><i class="fa-solid fa-check"></i> AI-powered personalized advice</li>
+        </ul>
+        <div class="wif-tag">Perfect fit ✨</div>
+      </div>
+
+      <div class="wif-card" style="--wc:linear-gradient(135deg,#ecfdf5,#eff6ff)">
+        <div class="wif-icon">🤱</div>
+        <h3>Mothers & Expecting Moms</h3>
+        <p class="wif-desc">Navigating pregnancy, postpartum recovery, and the unique health challenges of motherhood — with evidence-based guidance and compassionate support.</p>
+        <ul class="wif-list">
+          <li><i class="fa-solid fa-check"></i> Pregnancy nutrition by trimester</li>
+          <li><i class="fa-solid fa-check"></i> Postpartum mental health support</li>
+          <li><i class="fa-solid fa-check"></i> Gentle fitness for new moms</li>
+          <li><i class="fa-solid fa-check"></i> Mood tracking & emotional wellness</li>
+        </ul>
+        <div class="wif-tag">Perfect fit ✨</div>
+      </div>
+
+      <div class="wif-card" style="--wc:linear-gradient(135deg,#fdf4ff,#fce7f3)">
+        <div class="wif-icon">🌺</div>
+        <h3>Women 45+ & Menopause</h3>
+        <p class="wif-desc">Embracing perimenopause and menopause with confidence. Managing symptoms, protecting bone and heart health, and thriving in this powerful new chapter.</p>
+        <ul class="wif-list">
+          <li><i class="fa-solid fa-check"></i> Menopause symptom guidance</li>
+          <li><i class="fa-solid fa-check"></i> Bone & heart health tracking</li>
+          <li><i class="fa-solid fa-check"></i> Sleep optimization strategies</li>
+          <li><i class="fa-solid fa-check"></i> Strength training for longevity</li>
+        </ul>
+        <div class="wif-tag">Perfect fit ✨</div>
+      </div>
+
+      <div class="wif-card" style="--wc:linear-gradient(135deg,#fff1f2,#fdf4ff)">
+        <div class="wif-icon">🔬</div>
+        <h3>Women with PCOS / Hormonal Issues</h3>
+        <p class="wif-desc">Managing PCOS, endometriosis, thyroid issues, or hormonal imbalances with lifestyle strategies, nutrition guidance, and evidence-based information.</p>
+        <ul class="wif-list">
+          <li><i class="fa-solid fa-check"></i> PCOS-specific nutrition plans</li>
+          <li><i class="fa-solid fa-check"></i> Anti-inflammatory lifestyle tips</li>
+          <li><i class="fa-solid fa-check"></i> Supplement guidance</li>
+          <li><i class="fa-solid fa-check"></i> Cycle irregularity education</li>
+        </ul>
+        <div class="wif-tag">Perfect fit ✨</div>
+      </div>
+
+      <div class="wif-card" style="--wc:linear-gradient(135deg,#f0fdf4,#ecfdf5)">
+        <div class="wif-icon">🌱</div>
+        <h3>Wellness Beginners</h3>
+        <p class="wif-desc">Just starting your health journey and feeling overwhelmed? Bloom breaks everything down into simple, actionable steps — no prior knowledge needed.</p>
+        <ul class="wif-list">
+          <li><i class="fa-solid fa-check"></i> Beginner-friendly explanations</li>
+          <li><i class="fa-solid fa-check"></i> Step-by-step daily tracking</li>
+          <li><i class="fa-solid fa-check"></i> AI coach for all your questions</li>
+          <li><i class="fa-solid fa-check"></i> Judgment-free community feed</li>
+        </ul>
+        <div class="wif-tag">Perfect fit ✨</div>
+      </div>
+    </div>
+
+    <!-- Important Note Banner -->
+    <div class="wif-note reveal">
+      <div class="wif-note-icon">⚠️</div>
+      <div class="wif-note-content">
+        <strong>Important Note</strong>
+        <p>Bloom is a wellness education and tracking platform — not a medical service. The information provided is for general wellness purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider before making significant changes to your diet, exercise routine, or health management — especially if you have a diagnosed medical condition, are pregnant, or are taking medications.</p>
+      </div>
+    </div>
+
+    <!-- Who It's NOT For -->
+    <div class="wif-not-for reveal">
+      <h3><i class="fa-solid fa-circle-info"></i> Who Should Seek Professional Care First</h3>
+      <p>While Bloom supports general wellness, please consult a doctor before using this platform as your primary resource if you:</p>
+      <div class="wnf-grid">
+        <div class="wnf-item"><i class="fa-solid fa-triangle-exclamation"></i> Have a diagnosed eating disorder</div>
+        <div class="wnf-item"><i class="fa-solid fa-triangle-exclamation"></i> Are experiencing severe depression or suicidal thoughts</div>
+        <div class="wnf-item"><i class="fa-solid fa-triangle-exclamation"></i> Have a serious chronic illness requiring medical management</div>
+        <div class="wnf-item"><i class="fa-solid fa-triangle-exclamation"></i> Are in the first trimester of a high-risk pregnancy</div>
+        <div class="wnf-item"><i class="fa-solid fa-triangle-exclamation"></i> Have recently had surgery or a major medical procedure</div>
+        <div class="wnf-item"><i class="fa-solid fa-triangle-exclamation"></i> Are under 16 years of age</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FITNESS SECTION ===== -->
+<section id="fitness" class="section-block">
+  <div class="container">
+    <div class="section-label reveal">Physical Wellness</div>
+    <h2 class="section-title reveal">Move Your Body,<br/><em>Love Your Strength</em></h2>
+    <p class="section-desc reveal">Tailored fitness guidance for every stage of a woman's life — from gentle movement to high-intensity training.</p>
+
+    <div class="fitness-grid">
+      <!-- Log Activity -->
+      <div class="bloom-card log-card reveal">
+        <div class="card-glow"></div>
+        <h3><i class="fa-solid fa-dumbbell"></i> Log Today's Activity</h3>
+        <div class="input-group">
+          <label>Daily Steps</label>
+          <div class="input-wrap"><i class="fa-solid fa-shoe-prints"></i><input type="number" id="steps" placeholder="e.g. 8000" min="0"/></div>
+          <div class="input-hint">Goal: 10,000 steps/day</div>
+        </div>
+        <div class="input-group">
+          <label>Workout Duration (min)</label>
+          <div class="input-wrap"><i class="fa-solid fa-clock"></i><input type="number" id="workout-time" placeholder="e.g. 45" min="0"/></div>
+        </div>
+        <div class="input-group">
+          <label>Calories Burned</label>
+          <div class="input-wrap"><i class="fa-solid fa-fire"></i><input type="number" id="calories" placeholder="e.g. 300" min="0"/></div>
+        </div>
+        <div class="input-group">
+          <label>Activity Type</label>
+          <div class="input-wrap"><i class="fa-solid fa-heart-pulse"></i>
+            <select id="activity-type" class="bloom-select">
+              <option value="">Choose activity...</option>
+              <option>Yoga</option><option>Running</option><option>Walking</option>
+              <option>Pilates</option><option>Cycling</option><option>Swimming</option>
+              <option>Dance</option><option>Strength Training</option><option>HIIT</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-bloom btn-full" onclick="saveFitness()"><i class="fa-solid fa-check"></i> Save Activity</button>
+        <p id="fitness-msg" class="form-msg"></p>
+      </div>
+
+      <!-- Progress Rings -->
+      <div class="progress-rings-wrap reveal">
+        <div class="ring-trio">
+          <div class="ring-item">
+            <svg viewBox="0 0 120 120" class="ring-svg">
+              <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f472b6"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs>
+              <circle cx="60" cy="60" r="50" class="ring-track"/>
+              <circle cx="60" cy="60" r="50" class="ring-prog" id="steps-ring" stroke="url(#g1)" stroke-dasharray="0 314"/>
+            </svg>
+            <div class="ring-center"><span id="steps-pct">0%</span><small>Steps</small></div>
+          </div>
+          <div class="ring-item ring-main">
+            <svg viewBox="0 0 160 160" class="ring-svg">
+              <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ec4899"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+              <circle cx="80" cy="80" r="68" class="ring-track"/>
+              <circle cx="80" cy="80" r="68" class="ring-prog" id="workout-ring" stroke="url(#g2)" stroke-dasharray="0 427"/>
+            </svg>
+            <div class="ring-center ring-center-lg"><span id="workout-pct">0%</span><small>Workout</small></div>
+          </div>
+          <div class="ring-item">
+            <svg viewBox="0 0 120 120" class="ring-svg">
+              <defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ef4444"/></linearGradient></defs>
+              <circle cx="60" cy="60" r="50" class="ring-track"/>
+              <circle cx="60" cy="60" r="50" class="ring-prog" id="cal-ring" stroke="url(#g3)" stroke-dasharray="0 314"/>
+            </svg>
+            <div class="ring-center"><span id="cal-pct">0%</span><small>Calories</small></div>
+          </div>
+        </div>
+        <div class="ring-stats">
+          <div class="rs-item"><span id="steps-val">0</span><small>steps</small></div>
+          <div class="rs-item"><span id="workout-val">0</span><small>minutes</small></div>
+          <div class="rs-item"><span id="cal-val">0</span><small>kcal</small></div>
+        </div>
+      </div>
+
+      <!-- Weekly Chart -->
+      <div class="bloom-card chart-card reveal">
+        <h3><i class="fa-solid fa-chart-bar"></i> Weekly Activity</h3>
+        <div class="chart-area"><canvas id="fitness-chart"></canvas></div>
+      </div>
+
+      <!-- Fitness Tips -->
+      <div class="fitness-tips-grid reveal">
+        <div class="tip-card-sm" style="--tc:#fdf2f8">
+          <div class="tc-icon" style="background:#f9a8d4">🧘‍♀️</div>
+          <h4>Yoga & Flexibility</h4>
+          <p>30 min of yoga daily reduces cortisol by 25% and improves hormonal balance. Perfect for all fitness levels.</p>
+        </div>
+        <div class="tip-card-sm" style="--tc:#faf5ff">
+          <div class="tc-icon" style="background:#d8b4fe">🏃‍♀️</div>
+          <h4>Cardio for Heart Health</h4>
+          <p>Women who walk 7,500+ steps/day have 72% lower risk of cardiovascular disease. Start small, build up.</p>
+        </div>
+        <div class="tip-card-sm" style="--tc:#fff7ed">
+          <div class="tc-icon" style="background:#fed7aa">💪</div>
+          <h4>Strength Training</h4>
+          <p>Lifting weights 2–3×/week increases bone density by 3% per year — crucial for preventing osteoporosis.</p>
+        </div>
+        <div class="tip-card-sm" style="--tc:#f0fdf4">
+          <div class="tc-icon" style="background:#86efac">🌊</div>
+          <h4>Recovery & Rest</h4>
+          <p>Rest days are when your muscles actually grow. Women need 48h recovery between intense sessions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MENTAL WELLNESS ===== -->
+<section id="mental" class="section-block section-alt">
+  <div class="container">
+    <div class="section-label reveal">Mental Wellness</div>
+    <h2 class="section-title reveal">Peace Begins<br/><em>Within You</em></h2>
+    <p class="section-desc reveal">Your mental health is just as important as your physical health. Track your emotions, practice mindfulness, and build resilience.</p>
+
+    <div class="mental-layout">
+      <!-- Mood Tracker -->
+      <div class="bloom-card mood-card reveal">
+        <h3><i class="fa-solid fa-heart"></i> How Are You Feeling?</h3>
+        <p class="card-sub">Tap your current mood — no judgment, just awareness.</p>
+        <div class="mood-wheel">
+          <button class="mood-btn" data-mood="Radiant"   onclick="logMood('Radiant')">  <span>🤩</span><span>Radiant</span></button>
+          <button class="mood-btn" data-mood="Happy"     onclick="logMood('Happy')">    <span>😊</span><span>Happy</span></button>
+          <button class="mood-btn" data-mood="Calm"      onclick="logMood('Calm')">     <span>😌</span><span>Calm</span></button>
+          <button class="mood-btn" data-mood="Grateful"  onclick="logMood('Grateful')"> <span>🥰</span><span>Grateful</span></button>
+          <button class="mood-btn" data-mood="Tired"     onclick="logMood('Tired')">    <span>😴</span><span>Tired</span></button>
+          <button class="mood-btn" data-mood="Anxious"   onclick="logMood('Anxious')">  <span>😟</span><span>Anxious</span></button>
+          <button class="mood-btn" data-mood="Stressed"  onclick="logMood('Stressed')"> <span>😰</span><span>Stressed</span></button>
+          <button class="mood-btn" data-mood="Sad"       onclick="logMood('Sad')">      <span>😢</span><span>Sad</span></button>
+        </div>
+        <div class="mood-note-wrap">
+          <input type="text" id="mood-note" class="bloom-input" placeholder="Add a note about your day... (optional)"/>
+        </div>
+        <p id="mood-msg" class="form-msg"></p>
+        <div id="mood-history" class="mood-history-list"></div>
+      </div>
+
+      <!-- Breathing Exercise -->
+      <div class="bloom-card breathing-card reveal">
+        <h3><i class="fa-solid fa-wind"></i> Guided Breathing</h3>
+        <p class="card-sub">The 4-7-8 technique calms your nervous system in under 2 minutes.</p>
+        <div class="breath-visual">
+          <div class="breath-ring" id="breath-ring">
+            <div class="breath-core">
+              <span id="breath-label">Ready</span>
+              <span id="breath-num" class="breath-num"></span>
+            </div>
+          </div>
+        </div>
+        <div class="breath-steps">
+          <div class="bs-item"><span class="bs-num">4s</span><span>Inhale through nose</span></div>
+          <div class="bs-item"><span class="bs-num">7s</span><span>Hold your breath</span></div>
+          <div class="bs-item"><span class="bs-num">8s</span><span>Exhale through mouth</span></div>
+        </div>
+        <div class="breath-progress">Cycles: <span id="breath-cycles">0</span> / 4</div>
+        <button class="btn-bloom btn-full" id="breath-btn" onclick="toggleBreathing()">
+          <i class="fa-solid fa-play"></i> Begin Exercise
+        </button>
+      </div>
+
+      <!-- Mental Health Tips (Accordion) -->
+      <div class="accordion-wrap reveal">
+        <h3 class="acc-title"><i class="fa-solid fa-brain"></i> Mental Wellness Toolkit</h3>
+        <div class="accordion">
+          <div class="acc-item">
+            <button class="acc-header" onclick="toggleAcc(this)">
+              <span>🧘‍♀️ Mindfulness Meditation</span><i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="acc-body">
+              <p>Just 10 minutes of daily mindfulness meditation reduces anxiety by 58% and physically thickens the prefrontal cortex. Start with body scan meditation: lie down, close your eyes, and slowly bring awareness from your toes to the top of your head.</p>
+              <div class="acc-tip">💡 Try the 5-4-3-2-1 grounding technique when anxious: name 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste.</div>
+            </div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-header" onclick="toggleAcc(this)">
+              <span>📓 Journaling for Clarity</span><i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="acc-body">
+              <p>Expressive writing for 20 minutes/day reduces depression symptoms by 28%. Gratitude journaling rewires your brain's negativity bias within 21 days. Write 3 things you're grateful for each morning before checking your phone.</p>
+              <div class="acc-tip">💡 Prompt: "What would I tell my younger self today?" — this builds self-compassion and perspective.</div>
+            </div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-header" onclick="toggleAcc(this)">
+              <span>🌙 Sleep & Mental Health</span><i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="acc-body">
+              <p>Sleep deprivation amplifies emotional reactivity by 60%. Women are 40% more likely to experience insomnia than men due to hormonal fluctuations. Create a wind-down ritual: dim lights 2 hours before bed, avoid screens, and try magnesium glycinate.</p>
+              <div class="acc-tip">💡 The "cognitive shuffle" technique: imagine random, unrelated images (a duck, a mountain, a red shoe) to fall asleep faster.</div>
+            </div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-header" onclick="toggleAcc(this)">
+              <span>🤝 Social Connection</span><i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="acc-body">
+              <p>Strong social bonds reduce mortality risk by 50% — more than quitting smoking. Women's "tend-and-befriend" stress response means social connection is especially healing. Schedule one meaningful conversation per day, even 10 minutes.</p>
+              <div class="acc-tip">💡 Loneliness activates the same brain regions as physical pain. Prioritize connection as medicine.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HORMONAL & WOMEN'S HEALTH ===== -->
+<section id="hormonal" class="section-block">
+  <div class="container">
+    <div class="section-label reveal">Women's Health</div>
+    <h2 class="section-title reveal">Know Your Body,<br/><em>Own Your Health</em></h2>
+    <p class="section-desc reveal">Evidence-based information on the health topics that matter most to women — because knowledge is power.</p>
+
+    <div class="tabs-wrap reveal">
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="showTab('menstrual',this)">🌙 Menstrual Health</button>
+        <button class="tab-btn" onclick="showTab('pcos',this)">🔬 PCOS Awareness</button>
+        <button class="tab-btn" onclick="showTab('pregnancy',this)">🤱 Pregnancy & Fertility</button>
+        <button class="tab-btn" onclick="showTab('menopause',this)">🌺 Menopause</button>
+        <button class="tab-btn" onclick="showTab('hormones',this)">⚗️ Hormonal Balance</button>
+      </div>
+
+      <div id="tab-menstrual" class="tab-content active">
+        <div class="tab-grid">
+          <div class="tab-info">
+            <h3>Understanding Your Cycle</h3>
+            <p>The menstrual cycle is a vital sign — not just a monthly inconvenience. A healthy cycle is 21–35 days and tells you volumes about your overall health.</p>
+            <div class="phase-timeline">
+              <div class="phase" style="--pc:#fecdd3"><div class="phase-dot"></div><strong>Menstrual (Days 1–5)</strong><p>Estrogen and progesterone are low. Rest, iron-rich foods, and gentle movement support your body.</p></div>
+              <div class="phase" style="--pc:#ddd6fe"><div class="phase-dot"></div><strong>Follicular (Days 6–13)</strong><p>Rising estrogen boosts energy and mood. Great time for high-intensity workouts and creative projects.</p></div>
+              <div class="phase" style="--pc:#fde68a"><div class="phase-dot"></div><strong>Ovulation (Day 14)</strong><p>Peak estrogen and testosterone. You're at your most energetic, social, and confident.</p></div>
+              <div class="phase" style="--pc:#bbf7d0"><div class="phase-dot"></div><strong>Luteal (Days 15–28)</strong><p>Progesterone rises. Focus on calming activities, complex carbs, and magnesium-rich foods.</p></div>
+            </div>
+          </div>
+          <div class="tab-facts">
+            <div class="fact-card"><span class="fact-icon">📊</span><strong>Cycle Syncing</strong><p>Aligning your diet, exercise, and work schedule with your cycle phases can boost productivity by 30% and reduce PMS symptoms significantly.</p></div>
+            <div class="fact-card"><span class="fact-icon">🥗</span><strong>Nutrition by Phase</strong><p>Menstrual: iron & omega-3. Follicular: fermented foods. Ovulation: antioxidants. Luteal: magnesium & B6.</p></div>
+            <div class="fact-card"><span class="fact-icon">⚠️</span><strong>When to See a Doctor</strong><p>Cycles shorter than 21 days, longer than 35, extremely heavy bleeding, or severe pain are worth discussing with your healthcare provider.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-pcos" class="tab-content">
+        <div class="tab-grid">
+          <div class="tab-info">
+            <h3>PCOS — You're Not Alone</h3>
+            <p>Polycystic Ovary Syndrome affects 1 in 10 women of reproductive age. It's the most common hormonal disorder in women — and it's highly manageable with the right lifestyle.</p>
+            <div class="pcos-symptoms">
+              <div class="sym-item"><i class="fa-solid fa-circle-check"></i> Irregular or missed periods</div>
+              <div class="sym-item"><i class="fa-solid fa-circle-check"></i> Excess androgen (acne, hair growth)</div>
+              <div class="sym-item"><i class="fa-solid fa-circle-check"></i> Polycystic ovaries on ultrasound</div>
+              <div class="sym-item"><i class="fa-solid fa-circle-check"></i> Weight gain, especially around the abdomen</div>
+              <div class="sym-item"><i class="fa-solid fa-circle-check"></i> Fatigue and brain fog</div>
+              <div class="sym-item"><i class="fa-solid fa-circle-check"></i> Mood changes and anxiety</div>
+            </div>
+          </div>
+          <div class="tab-facts">
+            <div class="fact-card"><span class="fact-icon">🥦</span><strong>Anti-Inflammatory Diet</strong><p>A low-glycemic diet reduces insulin resistance — the root cause of PCOS. Focus on leafy greens, berries, fatty fish, and whole grains.</p></div>
+            <div class="fact-card"><span class="fact-icon">🏋️‍♀️</span><strong>Exercise as Medicine</strong><p>30 min of moderate exercise 5×/week reduces testosterone levels and improves insulin sensitivity in women with PCOS within 12 weeks.</p></div>
+            <div class="fact-card"><span class="fact-icon">💊</span><strong>Key Supplements</strong><p>Inositol (myo + d-chiro), magnesium, vitamin D, and omega-3 have strong evidence for PCOS symptom management.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-pregnancy" class="tab-content">
+        <div class="tab-grid">
+          <div class="tab-info">
+            <h3>Fertility & Pregnancy Wellness</h3>
+            <p>Whether you're trying to conceive, pregnant, or postpartum — your body is doing extraordinary work. Support it with knowledge and compassion.</p>
+            <div class="trimester-cards">
+              <div class="tri-card" style="--tc:#fce7f3"><strong>1st Trimester</strong><p>Folic acid (400–800mcg) is critical. Manage nausea with small, frequent meals and ginger. Rest is productive.</p></div>
+              <div class="tri-card" style="--tc:#ede9fe"><strong>2nd Trimester</strong><p>Energy returns. Focus on iron, calcium, and DHA. Gentle exercise like prenatal yoga is beneficial.</p></div>
+              <div class="tri-card" style="--tc:#ecfdf5"><strong>3rd Trimester</strong><p>Prepare for birth with perineal massage, birth plan, and pelvic floor exercises. Prioritize sleep.</p></div>
+            </div>
+          </div>
+          <div class="tab-facts">
+            <div class="fact-card"><span class="fact-icon">🌡️</span><strong>Fertility Awareness</strong><p>Tracking basal body temperature and cervical mucus can identify your fertile window with 99% accuracy when done correctly.</p></div>
+            <div class="fact-card"><span class="fact-icon">🧬</span><strong>Postpartum Health</strong><p>1 in 5 women experience postpartum depression. It's a medical condition, not a weakness. Seek support — you deserve it.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-menopause" class="tab-content">
+        <div class="tab-grid">
+          <div class="tab-info">
+            <h3>Embracing the Menopause Transition</h3>
+            <p>Menopause is not an ending — it's a powerful new chapter. Understanding what's happening in your body transforms this transition from something to fear into something to navigate with confidence.</p>
+            <div class="meno-stages">
+              <div class="ms-item"><strong>Perimenopause</strong><p>Can begin in your 40s. Irregular cycles, hot flashes, sleep disruption. Estrogen fluctuates wildly.</p></div>
+              <div class="ms-item"><strong>Menopause</strong><p>Defined as 12 consecutive months without a period. Average age: 51. Estrogen drops significantly.</p></div>
+              <div class="ms-item"><strong>Postmenopause</strong><p>Symptoms often ease. Focus shifts to bone density, heart health, and cognitive wellness.</p></div>
+            </div>
+          </div>
+          <div class="tab-facts">
+            <div class="fact-card"><span class="fact-icon">🦴</span><strong>Bone Health</strong><p>Women lose up to 20% of bone density in the 5–7 years after menopause. Weight-bearing exercise and calcium + vitamin D are essential.</p></div>
+            <div class="fact-card"><span class="fact-icon">❤️</span><strong>Heart Health</strong><p>Estrogen protects the heart. Post-menopause, cardiovascular risk increases. Mediterranean diet and regular cardio are your best allies.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-hormones" class="tab-content">
+        <div class="tab-grid">
+          <div class="tab-info">
+            <h3>Hormonal Balance — The Foundation of Wellbeing</h3>
+            <p>Hormones regulate everything: mood, energy, weight, sleep, libido, and metabolism. Small lifestyle changes create profound hormonal shifts.</p>
+            <div class="hormone-list">
+              <div class="hl-item"><span class="hl-name" style="color:#ec4899">Estrogen</span><p>The "feminine" hormone. Regulates cycle, bone density, mood, and skin. Balanced by cruciferous vegetables and reducing alcohol.</p></div>
+              <div class="hl-item"><span class="hl-name" style="color:#8b5cf6">Progesterone</span><p>The "calming" hormone. Promotes sleep and reduces anxiety. Boosted by vitamin B6, zinc, and stress reduction.</p></div>
+              <div class="hl-item"><span class="hl-name" style="color:#f59e0b">Cortisol</span><p>The "stress" hormone. Chronically elevated cortisol disrupts all other hormones. Managed by sleep, meditation, and adaptogens.</p></div>
+              <div class="hl-item"><span class="hl-name" style="color:#10b981">Insulin</span><p>Regulates blood sugar. Insulin resistance is the root of PCOS, weight gain, and fatigue. Managed by low-GI diet and exercise.</p></div>
+            </div>
+          </div>
+          <div class="tab-facts">
+            <div class="fact-card"><span class="fact-icon">🌿</span><strong>Adaptogenic Herbs</strong><p>Ashwagandha reduces cortisol by 30%. Maca supports estrogen balance. Vitex (chasteberry) regulates progesterone. Always consult your doctor.</p></div>
+            <div class="fact-card"><span class="fact-icon">😴</span><strong>Sleep & Hormones</strong><p>Growth hormone is released during deep sleep. Just one night of poor sleep raises cortisol by 37% and disrupts insulin sensitivity.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NUTRITION ===== -->
+<section id="nutrition" class="section-block section-alt">
+  <div class="container">
+    <div class="section-label reveal">Nourishment</div>
+    <h2 class="section-title reveal">Fuel Your Body<br/><em>With Intention</em></h2>
+    <p class="section-desc reveal">Food is medicine. Log your meals, track hydration, and discover what truly nourishes a woman's body.</p>
+
+    <div class="nutrition-layout">
+      <!-- Meal Logger -->
+      <div class="bloom-card reveal">
+        <h3><i class="fa-solid fa-utensils"></i> Today's Meals</h3>
+        <div class="meal-slots">
+          <div class="meal-slot">
+            <div class="meal-slot-head"><span class="ms-icon">🌅</span><span>Breakfast</span><span class="ms-time">6–10 AM</span></div>
+            <input type="text" id="breakfast" class="bloom-input" placeholder="e.g. Greek yogurt, berries, granola"/>
+          </div>
+          <div class="meal-slot">
+            <div class="meal-slot-head"><span class="ms-icon">☀️</span><span>Lunch</span><span class="ms-time">12–2 PM</span></div>
+            <input type="text" id="lunch" class="bloom-input" placeholder="e.g. Quinoa salad with avocado"/>
+          </div>
+          <div class="meal-slot">
+            <div class="meal-slot-head"><span class="ms-icon">🌙</span><span>Dinner</span><span class="ms-time">6–8 PM</span></div>
+            <input type="text" id="dinner" class="bloom-input" placeholder="e.g. Salmon with roasted vegetables"/>
+          </div>
+          <div class="meal-slot">
+            <div class="meal-slot-head"><span class="ms-icon">🍎</span><span>Snacks</span><span class="ms-time">Between meals</span></div>
+            <input type="text" id="snacks" class="bloom-input" placeholder="e.g. Almonds, apple, dark chocolate"/>
+          </div>
+        </div>
+        <button class="btn-bloom btn-full" onclick="saveMeals()"><i class="fa-solid fa-check"></i> Save Meals</button>
+        <p id="meal-msg" class="form-msg"></p>
+        <div id="meal-summary" class="meal-summary"></div>
+      </div>
+
+      <!-- Water Tracker -->
+      <div class="bloom-card water-card reveal">
+        <h3><i class="fa-solid fa-droplet"></i> Hydration Tracker</h3>
+        <p class="card-sub">Women need ~2.7L (11 cups) of water daily. Proper hydration improves skin, energy, and hormonal balance.</p>
+        <div class="water-display">
+          <div class="water-bottle-3d" id="water-bottle">
+            <div class="wb-fill" id="wb-fill"></div>
+            <div class="wb-bubbles" id="wb-bubbles"></div>
+            <div class="wb-label" id="wb-label">0%</div>
+          </div>
+          <div class="water-info">
+            <div class="wi-big" id="water-count">0</div>
+            <div class="wi-sub">of 8 glasses</div>
+            <div class="wi-ml" id="water-ml">0 ml</div>
+            <div class="water-btns">
+              <button class="btn-water-add" onclick="updateWater(1)"><i class="fa-solid fa-plus"></i> Add Glass</button>
+              <button class="btn-water-rm"  onclick="updateWater(-1)"><i class="fa-solid fa-minus"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="water-glasses-row" id="water-glasses"></div>
+      </div>
+
+      <!-- Nutrition Tips -->
+      <div class="nutrition-tips reveal">
+        <h3><i class="fa-solid fa-leaf"></i> Women's Nutrition Essentials</h3>
+        <div class="nut-tips-grid">
+          <div class="nt-card"><div class="nt-icon">🩸</div><h4>Iron</h4><p>Women lose iron monthly. Eat red meat, lentils, spinach + vitamin C to boost absorption. Deficiency causes fatigue and brain fog.</p></div>
+          <div class="nt-card"><div class="nt-icon">🦴</div><h4>Calcium</h4><p>1000mg/day for women under 50. Dairy, sardines, kale, and fortified foods. Pair with vitamin D for absorption.</p></div>
+          <div class="nt-card"><div class="nt-icon">🧠</div><h4>Omega-3</h4><p>DHA supports brain health and reduces PMS symptoms by 50%. Fatty fish 2×/week or algae-based supplements.</p></div>
+          <div class="nt-card"><div class="nt-icon">🌿</div><h4>Folate</h4><p>Critical for cell division and DNA repair. Essential pre-conception. Found in leafy greens, legumes, and fortified grains.</p></div>
+          <div class="nt-card"><div class="nt-icon">☀️</div><h4>Vitamin D</h4><p>75% of women are deficient. Regulates mood, immunity, and hormones. 1000–2000 IU daily, especially in winter.</p></div>
+          <div class="nt-card"><div class="nt-icon">⚡</div><h4>Magnesium</h4><p>Reduces PMS, improves sleep, and lowers anxiety. Found in dark chocolate, pumpkin seeds, and leafy greens.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DAILY TRACKER ===== -->
+<section id="tracker" class="section-block">
+  <div class="container">
+    <div class="section-label reveal">Daily Tracker</div>
+    <h2 class="section-title reveal">Your Daily<br/><em>Wellness Check-In</em></h2>
+    <p class="section-desc reveal">Small consistent actions create extraordinary results. Track your daily habits and watch your health transform.</p>
+
+    <div class="tracker-grid">
+      <div class="bloom-card tracker-card reveal">
+        <div class="tc-header"><span class="tc-icon-wrap">🏃‍♀️</span><h3>Movement</h3></div>
+        <div class="tc-progress"><div class="tcp-bar"><div class="tcp-fill steps-fill" id="t-steps-bar"></div></div><span id="t-steps-label">0 / 10,000 steps</span></div>
+        <div class="tc-progress"><div class="tcp-bar"><div class="tcp-fill workout-fill" id="t-workout-bar"></div></div><span id="t-workout-label">0 / 60 min workout</span></div>
+      </div>
+      <div class="bloom-card tracker-card reveal">
+        <div class="tc-header"><span class="tc-icon-wrap">💧</span><h3>Hydration</h3></div>
+        <div class="tc-progress"><div class="tcp-bar"><div class="tcp-fill water-fill" id="t-water-bar"></div></div><span id="t-water-label">0 / 8 glasses</span></div>
+        <div class="tc-progress"><div class="tcp-bar"><div class="tcp-fill cal-fill" id="t-cal-bar"></div></div><span id="t-cal-label">0 / 500 kcal burned</span></div>
+      </div>
+      <div class="bloom-card tracker-card reveal">
+        <div class="tc-header"><span class="tc-icon-wrap">🍽️</span><h3>Nutrition</h3></div>
+        <div id="tracker-meals" class="tracker-meals"><p class="empty-hint">Log your meals in the Nutrition section</p></div>
+      </div>
+      <div class="bloom-card tracker-card reveal">
+        <div class="tc-header"><span class="tc-icon-wrap">😊</span><h3>Mood Today</h3></div>
+        <div id="tracker-mood" class="tracker-mood"><p class="empty-hint">Log your mood in the Mental section</p></div>
+      </div>
+    </div>
+
+    <!-- AI Suggestions -->
+    <div class="ai-suggestions-wrap reveal">
+      <div class="ai-header">
+        <div class="ai-avatar">✨</div>
+        <div><h3>Bloom AI Suggestions</h3><p>Personalized wellness advice based on your data</p></div>
+      </div>
+      <ul id="ai-suggestions" class="ai-list"></ul>
+      <button class="btn-outline-bloom" onclick="generateSuggestions()"><i class="fa-solid fa-rotate"></i> Refresh Suggestions</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== QUOTES CAROUSEL ===== -->
+<section class="quotes-section">
+  <div class="container">
+    <div class="section-label reveal" style="color:rgba(255,255,255,0.7)">Inspiration</div>
+    <h2 class="section-title reveal" style="color:#fff">Words That<br/><em>Lift You Up</em></h2>
+    <div class="carousel-wrap reveal">
+      <div class="carousel-track" id="carousel-track">
+        <div class="quote-slide active">
+          <div class="qs-quote">"The most courageous act is still to think for yourself. Aloud."</div>
+          <div class="qs-author">— Coco Chanel</div>
+        </div>
+        <div class="quote-slide">
+          <div class="qs-quote">"I am not afraid of storms, for I am learning how to sail my ship."</div>
+          <div class="qs-author">— Louisa May Alcott</div>
+        </div>
+        <div class="quote-slide">
+          <div class="qs-quote">"You are enough. You have enough. You do enough."</div>
+          <div class="qs-author">— Brené Brown</div>
+        </div>
+        <div class="quote-slide">
+          <div class="qs-quote">"Caring for myself is not self-indulgence, it is self-preservation."</div>
+          <div class="qs-author">— Audre Lorde</div>
+        </div>
+        <div class="quote-slide">
+          <div class="qs-quote">"A woman is like a tea bag — you never know how strong she is until she gets in hot water."</div>
+          <div class="qs-author">— Eleanor Roosevelt</div>
+        </div>
+      </div>
+      <div class="carousel-dots" id="carousel-dots"></div>
+      <div class="carousel-nav">
+        <button onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
+        <button onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DASHBOARD ===== -->
+<section id="dashboard" class="section-block section-alt">
+  <div class="container">
+    <div class="section-label reveal">Dashboard</div>
+    <h2 class="section-title reveal">Your Wellness<br/><em>At a Glance</em></h2>
+
+    <!-- Score Card -->
+    <div class="score-hero reveal">
+      <div class="sh-ring-wrap">
+        <svg viewBox="0 0 220 220" class="sh-ring-svg">
+          <defs>
+            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ec4899"/>
+              <stop offset="50%" stop-color="#a855f7"/>
+              <stop offset="100%" stop-color="#6366f1"/>
+            </linearGradient>
+          </defs>
+          <circle cx="110" cy="110" r="95" class="sh-ring-bg"/>
+          <circle cx="110" cy="110" r="95" class="sh-ring-fill" id="score-ring" stroke-dasharray="0 597"/>
+        </svg>
+        <div class="sh-ring-center">
+          <div class="sh-score" id="health-score">--</div>
+          <div class="sh-label">/100</div>
+          <div class="sh-grade" id="score-grade">--</div>
+        </div>
+      </div>
+      <div class="sh-info">
+        <h3>Overall Wellness Score</h3>
+        <p id="score-desc">Complete your daily tracking to see your personalized wellness score.</p>
+        <div class="sh-bars" id="sh-bars"></div>
+        <button class="btn-bloom" onclick="refreshDashboard()"><i class="fa-solid fa-rotate"></i> Refresh Score</button>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="dash-grid">
+      <div class="dash-stat-card reveal" style="--dsc:#fce7f3">
+        <div class="dsc-icon">🏃‍♀️</div>
+        <div class="dsc-info">
+          <div class="dsc-label">Steps Today</div>
+          <div class="dsc-val" id="d-steps">--</div>
+          <div class="dsc-bar"><div class="dsc-fill" id="d-steps-fill" style="background:linear-gradient(90deg,#ec4899,#f472b6)"></div></div>
+        </div>
+      </div>
+      <div class="dash-stat-card reveal" style="--dsc:#faf5ff">
+        <div class="dsc-icon">😊</div>
+        <div class="dsc-info">
+          <div class="dsc-label">Today's Mood</div>
+          <div class="dsc-val" id="d-mood">--</div>
+          <div class="dsc-sub" id="d-mood-time">--</div>
+        </div>
+      </div>
+      <div class="dash-stat-card reveal" style="--dsc:#eff6ff">
+        <div class="dsc-icon">💧</div>
+        <div class="dsc-info">
+          <div class="dsc-label">Hydration</div>
+          <div class="dsc-val" id="d-water">--</div>
+          <div class="dsc-bar"><div class="dsc-fill" id="d-water-fill" style="background:linear-gradient(90deg,#60a5fa,#818cf8)"></div></div>
+        </div>
+      </div>
+      <div class="dash-stat-card reveal" style="--dsc:#fff7ed">
+        <div class="dsc-icon">🔥</div>
+        <div class="dsc-info">
+          <div class="dsc-label">Calories Burned</div>
+          <div class="dsc-val" id="d-calories">--</div>
+          <div class="dsc-bar"><div class="dsc-fill" id="d-cal-fill" style="background:linear-gradient(90deg,#fb923c,#f43f5e)"></div></div>
+        </div>
+      </div>
+      <div class="dash-stat-card reveal" style="--dsc:#f0fdf4">
+        <div class="dsc-icon">🍽️</div>
+        <div class="dsc-info">
+          <div class="dsc-label">Meals Logged</div>
+          <div class="dsc-val" id="d-meals">--</div>
+          <div class="dsc-sub">Today's nutrition</div>
+        </div>
+      </div>
+      <div class="dash-stat-card reveal" style="--dsc:#fdf4ff">
+        <div class="dsc-icon">💪</div>
+        <div class="dsc-info">
+          <div class="dsc-label">Workout</div>
+          <div class="dsc-val" id="d-workout">--</div>
+          <div class="dsc-bar"><div class="dsc-fill" id="d-workout-fill" style="background:linear-gradient(90deg,#a855f7,#ec4899)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Chart -->
+    <div class="bloom-card reveal">
+      <h3><i class="fa-solid fa-chart-line"></i> Weekly Overview</h3>
+      <div class="chart-area"><canvas id="dashboard-chart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BLOG / RESOURCES ===== -->
+<section class="section-block">
+  <div class="container">
+    <div class="section-label reveal">Resources</div>
+    <h2 class="section-title reveal">Wellness<br/><em>Knowledge Hub</em></h2>
+    <div class="blog-grid">
+      <div class="blog-card reveal">
+        <div class="bc-img" style="background:linear-gradient(135deg,#fce7f3,#ede9fe)"><span>🧘‍♀️</span></div>
+        <div class="bc-body">
+          <div class="bc-tag">Mental Health</div>
+          <h4>The Science of Self-Compassion</h4>
+          <p>Research shows self-compassion is more effective than self-criticism for achieving goals and recovering from setbacks.</p>
+          <a href="#mental" class="bc-link" onclick="smoothNav('mental')">Read More <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="blog-card reveal">
+        <div class="bc-img" style="background:linear-gradient(135deg,#fdf2f8,#fce7f3)"><span>🌙</span></div>
+        <div class="bc-body">
+          <div class="bc-tag">Hormonal Health</div>
+          <h4>Cycle Syncing: Work With Your Hormones</h4>
+          <p>Aligning your lifestyle with your menstrual cycle phases can dramatically improve energy, productivity, and mood.</p>
+          <a href="#hormonal" class="bc-link" onclick="smoothNav('hormonal')">Read More <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="blog-card reveal">
+        <div class="bc-img" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5)"><span>🥗</span></div>
+        <div class="bc-body">
+          <div class="bc-tag">Nutrition</div>
+          <h4>Anti-Inflammatory Eating for Women</h4>
+          <p>Chronic inflammation is the root of most women's health issues. These 10 foods fight it naturally.</p>
+          <a href="#nutrition" class="bc-link" onclick="smoothNav('nutrition')">Read More <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DAILY LIFE FEED ===== -->
+<section id="feed" class="section-block section-alt">
+  <div class="container">
+    <div class="section-label reveal">Community & News</div>
+    <h2 class="section-title reveal">Your Daily<br/><em>Wellness Feed</em></h2>
+    <p class="section-desc reveal">Stay inspired with trending wellness news, community posts, and daily health updates curated just for you.</p>
+
+    <div class="feed-layout">
+
+      <!-- Left: Daily Life Updates -->
+      <div class="feed-main">
+
+        <!-- Daily Check-in Post -->
+        <div class="bloom-card daily-checkin-card reveal">
+          <div class="dci-header">
+            <div class="dci-avatar">🌸</div>
+            <div>
+              <div class="dci-name">Your Daily Check-in</div>
+              <div class="dci-time" id="dci-time"></div>
+            </div>
+            <div class="dci-badge">Today</div>
+          </div>
+          <div class="dci-summary" id="dci-summary">
+            <p>Complete your daily tracking to see your wellness summary here.</p>
+          </div>
+          <div class="dci-actions">
+            <button class="dci-btn" onclick="smoothNav('tracker')"><i class="fa-solid fa-plus"></i> Log Activity</button>
+            <button class="dci-btn" onclick="shareDailyUpdate()"><i class="fa-solid fa-share-nodes"></i> Share Update</button>
+          </div>
+        </div>
+
+        <!-- Social Feed Posts -->
+        <div id="social-feed" class="social-feed-list"></div>
+
+        <!-- Load More -->
+        <div style="text-align:center;margin-top:1rem">
+          <button class="btn-outline-bloom" onclick="loadMorePosts()">
+            <i class="fa-solid fa-rotate"></i> Load More Posts
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: News + Trending -->
+      <div class="feed-sidebar">
+
+        <!-- Trending Health News -->
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-newspaper"></i> Trending Health News</h3>
+          <div id="health-news" class="news-list"></div>
+          <button class="btn-outline-bloom" style="width:100%;margin-top:1rem;justify-content:center" onclick="refreshNews()">
+            <i class="fa-solid fa-rotate"></i> Refresh News
+          </button>
+        </div>
+
+        <!-- Daily Wellness Tip -->
+        <div class="bloom-card tip-of-day reveal">
+          <div class="tod-header">
+            <span class="tod-badge">✨ Tip of the Day</span>
+            <span id="tod-date"></span>
+          </div>
+          <div class="tod-emoji" id="tod-emoji">🌸</div>
+          <p id="tod-tip" class="tod-text">Loading your daily tip...</p>
+          <button class="btn-outline-bloom" style="width:100%;justify-content:center;margin-top:0.75rem" onclick="newDailyTip()">
+            Next Tip <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <!-- Wellness Streak -->
+        <div class="bloom-card streak-card reveal">
+          <h3><i class="fa-solid fa-fire"></i> Your Wellness Streak</h3>
+          <div class="streak-display">
+            <div class="streak-num" id="streak-num">0</div>
+            <div class="streak-label">days in a row</div>
+          </div>
+          <div class="streak-week" id="streak-week"></div>
+          <p class="streak-msg" id="streak-msg">Start logging daily to build your streak!</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-chart-simple"></i> This Week's Stats</h3>
+          <div id="weekly-stats" class="weekly-stats-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI WELLNESS CHAT ===== -->
+<section id="aichat" class="section-block">
+  <div class="container">
+    <div class="section-label reveal">AI Coach</div>
+    <h2 class="section-title reveal">Your Personal<br/><em>AI Wellness Coach</em></h2>
+    <p class="section-desc reveal">Powered by GPT — ask anything about women's health, fitness, nutrition, hormones, or mental wellness.</p>
+
+    <div class="chat-layout reveal">
+      <!-- API Key Setup -->
+      <div class="chat-api-bar" id="chat-api-bar">
+        <div class="cab-left">
+          <span id="ai-status-dot" class="ai-dot-offline">⚪</span>
+          <span id="ai-status-msg">AI not connected — add your OpenAI key to unlock real GPT responses.</span>
+        </div>
+        <button class="btn-bloom btn-sm" onclick="toggleApiSetup()"><i class="fa-solid fa-key"></i> Setup AI</button>
+      </div>
+      <div class="api-setup-panel hidden" id="api-setup-panel">
+        <div class="asp-inner">
+          <i class="fa-solid fa-robot asp-icon"></i>
+          <div class="asp-info">
+            <strong>Connect OpenAI GPT</strong>
+            <p>Your key is stored only in your browser and sent directly to OpenAI.</p>
+          </div>
+          <input type="password" id="api-key-input" class="bloom-input asp-input" placeholder="sk-proj-..."/>
+          <button class="btn-bloom" onclick="saveApiKey()">Save Key</button>
+          <button class="btn-outline-bloom" onclick="toggleApiSetup()">Cancel</button>
+        </div>
+        <p id="api-key-msg" class="form-msg" style="text-align:center;margin-top:0.5rem"></p>
+      </div>
+
+      <!-- Chat Window -->
+      <div class="chat-window">
+        <div class="chat-header-bar">
+          <div class="chb-avatar">🌸</div>
+          <div class="chb-info">
+            <div class="chb-name">Bloom AI Coach</div>
+            <div class="chb-status" id="chb-status">● Ready to help you bloom</div>
+          </div>
+          <button class="chb-clear" onclick="clearChat()" title="Clear chat"><i class="fa-solid fa-trash"></i></button>
+        </div>
+
+        <div id="chat-messages" class="chat-messages" aria-live="polite">
+          <div class="chat-msg ai-msg">
+            <span class="chat-av">🌸</span>
+            <div class="chat-bubble">
+              <strong>Hi beautiful! I'm your Bloom AI Wellness Coach.</strong> 💜<br/><br/>
+              I'm here to support your health journey with personalized guidance on:<br/>
+              🏃‍♀️ Fitness & movement for women<br/>
+              🥗 Nutrition & hormonal health<br/>
+              🧠 Mental wellness & stress management<br/>
+              🌙 Sleep, cycle syncing & self-care<br/><br/>
+              What would you like to explore today?
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-chips-row">
+          <button class="chat-chip" onclick="sendChip('What foods balance hormones naturally?')">🥑 Hormone foods</button>
+          <button class="chat-chip" onclick="sendChip('Create a beginner workout plan for women')">🏋️‍♀️ Workout plan</button>
+          <button class="chat-chip" onclick="sendChip('How can I reduce PMS symptoms?')">🌙 PMS relief</button>
+          <button class="chat-chip" onclick="sendChip('Best stress relief techniques for women')">🧘‍♀️ Stress relief</button>
+          <button class="chat-chip" onclick="sendChip('Analyze my health data and give me advice')">📊 Analyze my data</button>
+          <button class="chat-chip" onclick="sendChip('How to improve sleep quality naturally?')">😴 Better sleep</button>
+        </div>
+
+        <div class="chat-input-row">
+          <textarea id="chat-input" class="chat-textarea" placeholder="Ask your AI wellness coach anything..." rows="2"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+          <button class="chat-send-btn" onclick="sendChat()" id="chat-send-btn" aria-label="Send">
+            <span id="send-icon">➤</span>
+          </button>
+        </div>
+        <p class="chat-note">Press Enter to send · Shift+Enter for new line · <button class="link-btn" onclick="toggleApiSetup()">Configure AI key</button></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HELP DESK ===== -->
+<section id="helpdesk" class="section-block section-alt">
+  <div class="container">
+    <div class="section-label reveal">Support</div>
+    <h2 class="section-title reveal">Help Desk &<br/><em>Support Center</em></h2>
+    <p class="section-desc reveal">We're here for you. Find answers, submit a request, or chat with our support team — because your wellness journey deserves full support.</p>
+
+    <div class="helpdesk-layout">
+
+      <!-- Left: FAQ + Contact Form -->
+      <div class="hd-main">
+
+        <!-- Search -->
+        <div class="hd-search-wrap reveal">
+          <div class="hd-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="hd-search" class="hd-search-input" placeholder="Search for help... e.g. 'how to track mood'" oninput="searchFAQ(this.value)"/>
+          </div>
+        </div>
+
+        <!-- FAQ Categories -->
+        <div class="faq-cats reveal">
+          <button class="faq-cat-btn active" onclick="filterFAQ('all', this)"><i class="fa-solid fa-border-all"></i> All</button>
+          <button class="faq-cat-btn" onclick="filterFAQ('getting-started', this)"><i class="fa-solid fa-rocket"></i> Getting Started</button>
+          <button class="faq-cat-btn" onclick="filterFAQ('tracking', this)"><i class="fa-solid fa-chart-line"></i> Tracking</button>
+          <button class="faq-cat-btn" onclick="filterFAQ('ai', this)"><i class="fa-solid fa-robot"></i> AI Coach</button>
+          <button class="faq-cat-btn" onclick="filterFAQ('health', this)"><i class="fa-solid fa-heart-pulse"></i> Health Info</button>
+          <button class="faq-cat-btn" onclick="filterFAQ('privacy', this)"><i class="fa-solid fa-shield-halved"></i> Privacy</button>
+        </div>
+
+        <!-- FAQ List -->
+        <div id="faq-list" class="faq-list reveal"></div>
+
+        <!-- Contact Form -->
+        <div class="bloom-card hd-contact-card reveal">
+          <h3><i class="fa-solid fa-envelope"></i> Send Us a Message</h3>
+          <p class="card-sub">Can't find your answer? Our wellness support team responds within 24 hours.</p>
+          <form onsubmit="submitHelpTicket(event)" class="hd-form">
+            <div class="hd-form-row">
+              <div class="input-group">
+                <label>Your Name</label>
+                <div class="input-wrap"><i class="fa-solid fa-user"></i><input type="text" id="hd-name" placeholder="e.g. Sarah Johnson" required/></div>
+              </div>
+              <div class="input-group">
+                <label>Email Address</label>
+                <div class="input-wrap"><i class="fa-solid fa-envelope"></i><input type="email" id="hd-email" placeholder="your@email.com" required/></div>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Topic</label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-tag"></i>
+                <select id="hd-topic" class="bloom-select" required>
+                  <option value="">Select a topic...</option>
+                  <option>Getting Started with Bloom</option>
+                  <option>Fitness Tracking Issue</option>
+                  <option>Mood / Mental Wellness</option>
+                  <option>Nutrition Logging</option>
+                  <option>AI Coach / OpenAI Setup</option>
+                  <option>Data & Privacy</option>
+                  <option>Health Information Question</option>
+                  <option>Bug or Technical Issue</option>
+                  <option>Feature Request</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Priority</label>
+              <div class="hd-priority-row">
+                <label class="priority-opt"><input type="radio" name="priority" value="low" checked/><span class="po-badge low">🟢 Low</span></label>
+                <label class="priority-opt"><input type="radio" name="priority" value="medium"/><span class="po-badge medium">🟡 Medium</span></label>
+                <label class="priority-opt"><input type="radio" name="priority" value="high"/><span class="po-badge high">🔴 High</span></label>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Your Message</label>
+              <textarea id="hd-message" class="hd-textarea" placeholder="Describe your question or issue in detail..." rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn-bloom btn-full"><i class="fa-solid fa-paper-plane"></i> Submit Support Request</button>
+            <p id="hd-form-msg" class="form-msg" style="text-align:center;margin-top:0.75rem"></p>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Sidebar -->
+      <div class="hd-sidebar">
+
+        <!-- Quick Help -->
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-bolt"></i> Quick Help</h3>
+          <div class="quick-help-list">
+            <a class="qh-item" onclick="smoothNav('tracker')">
+              <div class="qh-icon" style="background:#fce7f3">📊</div>
+              <div><strong>Start Tracking</strong><p>Log your first activity, mood, or meal</p></div>
+              <i class="fa-solid fa-chevron-right qh-arrow"></i>
+            </a>
+            <a class="qh-item" onclick="smoothNav('aichat')">
+              <div class="qh-icon" style="background:#ede9fe">🤖</div>
+              <div><strong>AI Coach Setup</strong><p>Connect your OpenAI key for GPT responses</p></div>
+              <i class="fa-solid fa-chevron-right qh-arrow"></i>
+            </a>
+            <a class="qh-item" onclick="smoothNav('hormonal')">
+              <div class="qh-icon" style="background:#fdf4ff">🌙</div>
+              <div><strong>Women's Health Info</strong><p>Cycle, PCOS, hormones & more</p></div>
+              <i class="fa-solid fa-chevron-right qh-arrow"></i>
+            </a>
+            <a class="qh-item" onclick="smoothNav('dashboard')">
+              <div class="qh-icon" style="background:#f0fdf4">📈</div>
+              <div><strong>View Dashboard</strong><p>See your wellness score & stats</p></div>
+              <i class="fa-solid fa-chevron-right qh-arrow"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Support Status -->
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-circle-check"></i> Support Status</h3>
+          <div class="support-status">
+            <div class="ss-item online"><div class="ss-dot"></div><span>Platform</span><span class="ss-val">Operational</span></div>
+            <div class="ss-item online"><div class="ss-dot"></div><span>AI Coach</span><span class="ss-val">Available</span></div>
+            <div class="ss-item online"><div class="ss-dot"></div><span>Data Sync</span><span class="ss-val">Normal</span></div>
+            <div class="ss-item"><div class="ss-dot warning"></div><span>Response Time</span><span class="ss-val">~24 hrs</span></div>
+          </div>
+        </div>
+
+        <!-- Contact Channels -->
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-headset"></i> Contact Channels</h3>
+          <div class="contact-channels">
+            <div class="cc-item">
+              <div class="cc-icon"><i class="fa-solid fa-envelope"></i></div>
+              <div><strong>Email Support</strong><p>support@bloomwellness.app</p><span class="cc-time">Response: 24 hrs</span></div>
+            </div>
+            <div class="cc-item">
+              <div class="cc-icon"><i class="fa-brands fa-instagram"></i></div>
+              <div><strong>Instagram DM</strong><p>@bloomwellnessapp</p><span class="cc-time">Response: 48 hrs</span></div>
+            </div>
+            <div class="cc-item">
+              <div class="cc-icon"><i class="fa-solid fa-comments"></i></div>
+              <div><strong>AI Chat</strong><p>Available 24/7 in the AI Coach section</p><span class="cc-time">Instant response</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ticket History -->
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-ticket"></i> Your Support Tickets</h3>
+          <div id="ticket-history" class="ticket-history">
+            <p class="empty-hint">No tickets submitted yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEEDBACK SECTION ===== -->
+<section id="feedback" class="section-block feedback-section">
+  <div class="container">
+    <div class="section-label reveal">Your Voice Matters</div>
+    <h2 class="section-title reveal">Share Your<br/><em>Feedback</em></h2>
+    <p class="section-desc reveal">Help us make Bloom better for every woman. Your honest feedback shapes the future of this platform.</p>
+
+    <div class="feedback-layout">
+
+      <!-- ===== FEEDBACK FORM ===== -->
+      <div class="bloom-card feedback-card reveal">
+        <div class="fb-card-header">
+          <div class="fb-header-icon">💬</div>
+          <div>
+            <h3>Tell Us What You Think</h3>
+            <p class="card-sub">Takes less than 2 minutes — every response is read by our team.</p>
+          </div>
+        </div>
+
+        <!-- Overall Rating -->
+        <div class="fb-section">
+          <label class="fb-label">Overall Experience</label>
+          <div class="star-rating" id="star-rating" role="group" aria-label="Rate your experience">
+            <button class="star-btn" data-val="1" onclick="setRating(1)" aria-label="1 star">★</button>
+            <button class="star-btn" data-val="2" onclick="setRating(2)" aria-label="2 stars">★</button>
+            <button class="star-btn" data-val="3" onclick="setRating(3)" aria-label="3 stars">★</button>
+            <button class="star-btn" data-val="4" onclick="setRating(4)" aria-label="4 stars">★</button>
+            <button class="star-btn" data-val="5" onclick="setRating(5)" aria-label="5 stars">★</button>
+          </div>
+          <span class="rating-label" id="rating-label">Tap to rate</span>
+        </div>
+
+        <!-- Category -->
+        <div class="fb-section">
+          <label class="fb-label">What are you giving feedback on?</label>
+          <div class="fb-cat-grid">
+            <button class="fb-cat-btn" data-cat="Overall App"      onclick="selectCat(this)">🌸 Overall App</button>
+            <button class="fb-cat-btn" data-cat="Fitness Tracker"  onclick="selectCat(this)">🏃‍♀️ Fitness</button>
+            <button class="fb-cat-btn" data-cat="Mental Wellness"  onclick="selectCat(this)">🧠 Mental</button>
+            <button class="fb-cat-btn" data-cat="Nutrition"        onclick="selectCat(this)">🥗 Nutrition</button>
+            <button class="fb-cat-btn" data-cat="AI Coach"         onclick="selectCat(this)">🤖 AI Coach</button>
+            <button class="fb-cat-btn" data-cat="Women's Health"   onclick="selectCat(this)">🌙 Women's Health</button>
+            <button class="fb-cat-btn" data-cat="Social Feed"      onclick="selectCat(this)">📱 Feed</button>
+            <button class="fb-cat-btn" data-cat="Design & UI"      onclick="selectCat(this)">🎨 Design</button>
+          </div>
+        </div>
+
+        <!-- Feedback Type -->
+        <div class="fb-section">
+          <label class="fb-label">Type of feedback</label>
+          <div class="fb-type-row">
+            <label class="fb-type-opt">
+              <input type="radio" name="fb-type" value="suggestion" checked/>
+              <span class="fb-type-badge"><i class="fa-solid fa-lightbulb"></i> Suggestion</span>
+            </label>
+            <label class="fb-type-opt">
+              <input type="radio" name="fb-type" value="bug"/>
+              <span class="fb-type-badge"><i class="fa-solid fa-bug"></i> Bug Report</span>
+            </label>
+            <label class="fb-type-opt">
+              <input type="radio" name="fb-type" value="compliment"/>
+              <span class="fb-type-badge"><i class="fa-solid fa-heart"></i> Compliment</span>
+            </label>
+            <label class="fb-type-opt">
+              <input type="radio" name="fb-type" value="question"/>
+              <span class="fb-type-badge"><i class="fa-solid fa-circle-question"></i> Question</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Name & Email (optional) -->
+        <div class="fb-section">
+          <div class="fb-row-2">
+            <div class="auth-field">
+              <label for="fb-name"><i class="fa-solid fa-user"></i> Name <span class="fb-optional">(optional)</span></label>
+              <input type="text" id="fb-name" class="bloom-input" placeholder="Your first name"/>
+            </div>
+            <div class="auth-field">
+              <label for="fb-email"><i class="fa-solid fa-envelope"></i> Email <span class="fb-optional">(optional)</span></label>
+              <input type="email" id="fb-email" class="bloom-input" placeholder="For follow-up replies"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="fb-section">
+          <label class="fb-label" for="fb-message">Your Feedback <span class="fb-required">*</span></label>
+          <textarea id="fb-message" class="fb-textarea" placeholder="Share your thoughts, ideas, or experiences... What do you love? What could be better? What's missing?" rows="5" oninput="updateCharCount(this)"></textarea>
+          <div class="fb-char-row">
+            <span id="fb-char-count" class="fb-char">0 / 500</span>
+            <span id="fb-char-warn" class="fb-char-warn hidden">Getting close to the limit</span>
+          </div>
+        </div>
+
+        <!-- Would Recommend -->
+        <div class="fb-section">
+          <label class="fb-label">Would you recommend Bloom to a friend?</label>
+          <div class="nps-row">
+            <span class="nps-label-sm">Not likely</span>
+            <div class="nps-btns" id="nps-btns">
+              <button class="nps-btn" data-val="1"  onclick="setNPS(1)">1</button>
+              <button class="nps-btn" data-val="2"  onclick="setNPS(2)">2</button>
+              <button class="nps-btn" data-val="3"  onclick="setNPS(3)">3</button>
+              <button class="nps-btn" data-val="4"  onclick="setNPS(4)">4</button>
+              <button class="nps-btn" data-val="5"  onclick="setNPS(5)">5</button>
+              <button class="nps-btn" data-val="6"  onclick="setNPS(6)">6</button>
+              <button class="nps-btn" data-val="7"  onclick="setNPS(7)">7</button>
+              <button class="nps-btn" data-val="8"  onclick="setNPS(8)">8</button>
+              <button class="nps-btn" data-val="9"  onclick="setNPS(9)">9</button>
+              <button class="nps-btn" data-val="10" onclick="setNPS(10)">10</button>
+            </div>
+            <span class="nps-label-sm">Very likely</span>
+          </div>
+        </div>
+
+        <!-- Feature Wishlist -->
+        <div class="fb-section">
+          <label class="fb-label">Which features would you most like to see added?</label>
+          <div class="wishlist-grid">
+            <label class="wish-item"><input type="checkbox" value="Period tracker"/> <span>🌙 Period tracker</span></label>
+            <label class="wish-item"><input type="checkbox" value="Sleep tracker"/> <span>😴 Sleep tracker</span></label>
+            <label class="wish-item"><input type="checkbox" value="Workout videos"/> <span>🎥 Workout videos</span></label>
+            <label class="wish-item"><input type="checkbox" value="Meal planner"/> <span>🥗 Meal planner</span></label>
+            <label class="wish-item"><input type="checkbox" value="Community forum"/> <span>👭 Community forum</span></label>
+            <label class="wish-item"><input type="checkbox" value="Wearable sync"/> <span>⌚ Wearable sync</span></label>
+            <label class="wish-item"><input type="checkbox" value="Doctor connect"/> <span>👩‍⚕️ Doctor connect</span></label>
+            <label class="wish-item"><input type="checkbox" value="Meditation library"/> <span>🧘‍♀️ Meditation library</span></label>
+          </div>
+        </div>
+
+        <button class="btn-bloom btn-full fb-submit-btn" onclick="submitFeedback()" id="fb-submit-btn">
+          <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+        </button>
+        <p id="fb-msg" class="form-msg" style="text-align:center;margin-top:0.75rem"></p>
+      </div>
+
+      <!-- ===== RIGHT SIDEBAR ===== -->
+      <div class="feedback-sidebar">
+
+        <!-- Stats -->
+        <div class="bloom-card fb-stats-card reveal">
+          <h3><i class="fa-solid fa-chart-bar"></i> Community Feedback</h3>
+          <div class="fb-stat-row">
+            <div class="fb-stat"><span class="fb-stat-num" id="total-feedback-count">0</span><span class="fb-stat-label">Total Reviews</span></div>
+            <div class="fb-stat"><span class="fb-stat-num" id="avg-rating-display">--</span><span class="fb-stat-label">Avg Rating</span></div>
+            <div class="fb-stat"><span class="fb-stat-num" id="recommend-pct">--%</span><span class="fb-stat-label">Recommend</span></div>
+          </div>
+          <div class="rating-breakdown" id="rating-breakdown"></div>
+        </div>
+
+        <!-- Recent Feedback -->
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-comments"></i> Recent Feedback</h3>
+          <div id="recent-feedback-list" class="recent-fb-list">
+            <p class="empty-hint">Be the first to share feedback!</p>
+          </div>
+        </div>
+
+        <!-- Why Feedback Matters -->
+        <div class="bloom-card fb-why-card reveal">
+          <div class="fb-why-icon">💜</div>
+          <h3>Why Your Voice Matters</h3>
+          <p>Every feature in Bloom was shaped by women like you. Your feedback directly influences what we build next — from new tracking tools to AI improvements.</p>
+          <div class="fb-why-list">
+            <div class="fb-why-item"><i class="fa-solid fa-check"></i> All feedback is read by our team</div>
+            <div class="fb-why-item"><i class="fa-solid fa-check"></i> Top suggestions get built first</div>
+            <div class="fb-why-item"><i class="fa-solid fa-check"></i> Bug reports fixed within 48 hrs</div>
+            <div class="fb-why-item"><i class="fa-solid fa-check"></i> Your privacy is always protected</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="container footer-grid">
+      <div class="footer-brand-col">
+        <div class="footer-brand"><span>🌸</span> Bloom</div>
+        <p>A wellness platform built with love for women everywhere. Your health journey is sacred — we're here to support every step.</p>
+        <div class="social-links">
+          <a href="#" class="social-btn" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-btn" aria-label="Pinterest"><i class="fa-brands fa-pinterest"></i></a>
+          <a href="#" class="social-btn" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="social-btn" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-links-col">
+        <h4>Wellness</h4>
+        <ul>
+          <li><a href="#fitness"   onclick="smoothNav('fitness')">Fitness</a></li>
+          <li><a href="#mental"    onclick="smoothNav('mental')">Mental Health</a></li>
+          <li><a href="#hormonal"  onclick="smoothNav('hormonal')">Women's Health</a></li>
+          <li><a href="#nutrition" onclick="smoothNav('nutrition')">Nutrition</a></li>
+          <li><a href="#tracker"   onclick="smoothNav('tracker')">Daily Tracker</a></li>
+        </ul>
+      </div>
+      <div class="footer-newsletter-col">
+        <h4>Weekly Wellness Letter</h4>
+        <p>Get evidence-based wellness tips, cycle syncing guides, and empowering content every week.</p>
+        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+          <input type="email" id="newsletter-email" placeholder="your@email.com" required/>
+          <button type="submit" class="btn-bloom">Subscribe</button>
+        </form>
+        <p id="newsletter-msg" class="form-msg"></p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>🌸 Bloom &copy; 2026 — Made with love for women everywhere.</p>
+      <p class="footer-disclaimer">This platform is for informational purposes only. Always consult a healthcare professional for medical advice.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
+
