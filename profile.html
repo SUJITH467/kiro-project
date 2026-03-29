@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>My Profile — Bloom Wellness</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>"/>
+  <meta name="theme-color" content="#ec4899"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="animations.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <a class="nav-brand" href="index.html">
+    <span class="brand-flower">🌸</span>
+    <span class="brand-name">Bloom</span>
+  </a>
+  <ul class="nav-links" id="nav-links">
+    <li><a class="nav-link" href="index.html">← Back to Home</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="dark-toggle" id="dark-btn" onclick="toggleDark()" aria-label="Toggle dark mode">🌙</button>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== PROFILE PAGE ===== -->
+<div class="profile-page">
+  <div class="container">
+    <!-- Profile Header -->
+    <div class="profile-header reveal">
+      <div class="profile-cover"></div>
+      <div class="profile-hero">
+        <div class="profile-avatar">
+          <div class="profile-avatar-placeholder">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <button class="profile-avatar-edit" onclick="triggerAvatarUpload()" title="Upload profile picture">
+            <i class="fa-solid fa-camera"></i>
+          </button>
+          <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)"/>
+        </div>
+        <div class="profile-info">
+          <h1 id="profile-name">Guest User</h1>
+          <p id="profile-email">guest@example.com</p>
+          <div class="profile-meta">
+            <span class="meta-item"><i class="fa-solid fa-cake-candles"></i> <span id="profile-age">Age not set</span></span>
+            <span class="meta-item"><i class="fa-solid fa-target"></i> <span id="profile-goal">No goal set</span></span>
+            <span class="meta-item"><i class="fa-solid fa-calendar-check"></i> Joined <span id="profile-joined">today</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-content">
+      <!-- Sidebar -->
+      <aside class="profile-sidebar">
+        <div class="sidebar-menu">
+          <button class="sidebar-item active" onclick="showProfileTab('overview')">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Overview</span>
+          </button>
+          <button class="sidebar-item" onclick="showProfileTab('settings')">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Settings</span>
+          </button>
+          <button class="sidebar-item" onclick="showProfileTab('activity')">
+            <i class="fa-solid fa-history"></i>
+            <span>Activity</span>
+          </button>
+          <button class="sidebar-item" onclick="showProfileTab('preferences')">
+            <i class="fa-solid fa-heart"></i>
+            <span>Preferences</span>
+          </button>
+          <hr class="sidebar-divider"/>
+          <button class="sidebar-item danger" onclick="doLogout()">
+            <i class="fa-solid fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="profile-main">
+        <!-- Overview Tab -->
+        <div class="profile-tab active" id="tab-overview">
+          <h2>Account Overview</h2>
+          
+          <div class="profile-card">
+            <h3>Personal Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>Full Name</label>
+                <p id="info-name">—</p>
+              </div>
+              <div class="info-item">
+                <label>Email Address</label>
+                <p id="info-email">—</p>
+              </div>
+              <div class="info-item">
+                <label>Age Group</label>
+                <p id="info-age">—</p>
+              </div>
+              <div class="info-item">
+                <label>Wellness Goal</label>
+                <p id="info-goal">—</p>
+              </div>
+              <div class="info-item">
+                <label>Member Since</label>
+                <p id="info-joined">—</p>
+              </div>
+              <div class="info-item">
+                <label>Last Login</label>
+                <p id="info-lastlogin">—</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-card">
+            <h3>Account Statistics</h3>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="stat-logs">0</div>
+                  <div class="stat-label">Total Logs</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="stat-badges">0</div>
+                  <div class="stat-label">Badges Earned</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="stat-streak">0</div>
+                  <div class="stat-label">Day Streak</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="stat-points">0</div>
+                  <div class="stat-label">Points</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="profile-tab" id="tab-settings">
+          <h2>Account Settings</h2>
+          
+          <div class="profile-card">
+            <h3>Security</h3>
+            <div class="settings-item">
+              <div class="settings-info">
+                <strong>Password</strong>
+                <p>Change your password regularly for account security</p>
+              </div>
+              <button class="btn-outline-bloom btn-sm" onclick="showChangePasswordModal()">
+                <i class="fa-solid fa-lock"></i> Change Password
+              </button>
+            </div>
+          </div>
+
+          <div class="profile-card">
+            <h3>Notifications</h3>
+            <div class="settings-toggle">
+              <div class="toggle-item">
+                <div class="toggle-info">
+                  <strong>Daily Reminders</strong>
+                  <p>Get daily wellness reminders on your screen</p>
+                </div>
+                <input type="checkbox" class="toggle-switch" id="notify-daily" checked onchange="saveNotificationSettings()"/>
+              </div>
+              <div class="toggle-item">
+                <div class="toggle-info">
+                  <strong>Weekly Summary</strong>
+                  <p>Receive a weekly summary of your wellness progress</p>
+                </div>
+                <input type="checkbox" class="toggle-switch" id="notify-weekly" checked onchange="saveNotificationSettings()"/>
+              </div>
+              <div class="toggle-item">
+                <div class="toggle-info">
+                  <strong>Achievement Alerts</strong>
+                  <p>Get notified when you unlock new badges</p>
+                </div>
+                <input type="checkbox" class="toggle-switch" id="notify-achievements" checked onchange="saveNotificationSettings()"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Tab -->
+        <div class="profile-tab" id="tab-activity">
+          <h2>Recent Activity</h2>
+          
+          <div class="activity-list" id="activity-list">
+            <p class="empty-state">No activity yet. Start tracking to see your activity here!</p>
+          </div>
+        </div>
+
+        <!-- Preferences Tab -->
+        <div class="profile-tab" id="tab-preferences">
+          <h2>Wellness Preferences</h2>
+          
+          <div class="profile-card">
+            <h3>Update Your Goals</h3>
+            <div class="form-group">
+              <label for="pref-goal">Primary Wellness Goal</label>
+              <select id="pref-goal" class="form-control">
+                <option value="">Select a goal...</option>
+                <option value="Weight loss">Weight loss</option>
+                <option value="Fitness & strength">Fitness & strength</option>
+                <option value="Mental wellness">Mental wellness</option>
+                <option value="Hormonal health">Hormonal health</option>
+                <option value="General self-care">General self-care</option>
+                <option value="Better sleep">Better sleep</option>
+              </select>
+            </div>
+            <button class="btn-bloom" onclick="savePreferences()">
+              <i class="fa-solid fa-save"></i> Save Preferences
+            </button>
+          </div>
+
+          <div class="profile-card">
+            <h3>Theme Preference</h3>
+            <div class="theme-options">
+              <label class="theme-option">
+                <input type="radio" name="theme" value="light" onchange="setThemePreference('light')"/>
+                <span><i class="fa-solid fa-sun"></i> Light</span>
+              </label>
+              <label class="theme-option">
+                <input type="radio" name="theme" value="dark" onchange="setThemePreference('dark')"/>
+                <span><i class="fa-solid fa-moon"></i> Dark</span>
+              </label>
+              <label class="theme-option">
+                <input type="radio" name="theme" value="auto" checked onchange="setThemePreference('auto')"/>
+                <span><i class="fa-solid fa-circle-half-stroke"></i> Auto</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal-overlay hidden" id="change-password-modal" onclick="if(event.target === this) closeChangePasswordModal()">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Change Password</h3>
+      <button class="modal-close" onclick="closeChangePasswordModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="change-password-form" onsubmit="submitChangePassword(event)">
+        <div class="form-group">
+          <label for="current-pw">Current Password</label>
+          <input type="password" id="current-pw" required/>
+        </div>
+        <div class="form-group">
+          <label for="new-pw">New Password</label>
+          <input type="password" id="new-pw" required/>
+        </div>
+        <div class="form-group">
+          <label for="confirm-pw">Confirm New Password</label>
+          <input type="password" id="confirm-pw" required/>
+        </div>
+        <div id="password-error" class="form-error hidden"></div>
+        <div id="password-success" class="form-success hidden">Password changed successfully!</div>
+        <div class="modal-actions">
+          <button type="button" class="btn-outline-bloom" onclick="closeChangePasswordModal()">Cancel</button>
+          <button type="submit" class="btn-bloom">Change Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

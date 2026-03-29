@@ -87,7 +87,29 @@ function smoothNav(id) {
   document.getElementById('nav-links')?.classList.remove('open');
   const spans = document.querySelectorAll('.hamburger span');
   spans.forEach(s => { s.style.transform = ''; s.style.opacity = '1'; });
+  // Close all dropdowns
+  document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('active'));
 }
+
+// ===== NAVBAR DROPDOWN MENU =====
+function toggleDropdown(btn) {
+  const dropdown = btn.closest('.nav-dropdown');
+  if (!dropdown) return;
+  
+  // Close other dropdowns
+  document.querySelectorAll('.nav-dropdown.active').forEach(d => {
+    if (d !== dropdown) d.classList.remove('active');
+  });
+  
+  dropdown.classList.toggle('active');
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.nav-dropdown')) {
+    document.querySelectorAll('.nav-dropdown.active').forEach(d => d.classList.remove('active'));
+  }
+});
 
 // =============================================
 // DARK MODE
@@ -107,6 +129,62 @@ function initDarkMode() {
     if (btn) btn.textContent = '☀️';
   }
 }
+
+// =============================================
+// AUTHENTICATION & PROFILE
+// =============================================
+const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : d; } catch { return d; } };
+const lsSet = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+function updateAuthNavbar() {
+  const session = lsGet('bloom_session', null);
+  const guestSection = document.getElementById('nav-auth-guest');
+  const userSection = document.getElementById('nav-auth-user');
+  
+  if (guestSection && userSection) {
+    if (session && session.userId && !session.isGuest) {
+      // User is logged in
+      guestSection.classList.add('hidden');
+      userSection.classList.remove('hidden');
+      
+      // Update profile name and avatar
+      const nameEl = document.getElementById('profile-name-mini');
+      if (nameEl) nameEl.textContent = session.name || 'User';
+      
+      // Load avatar if exists
+      const avatar = lsGet('profile_avatar_' + session.userId, null);
+      if (avatar) {
+        const avatarEl = document.getElementById('profile-avatar-mini');
+        if (avatarEl) avatarEl.style.backgroundImage = `url(${avatar})`;
+      }
+    } else {
+      // User is not logged in
+      userSection.classList.add('hidden');
+      guestSection.classList.remove('hidden');
+    }
+  }
+}
+
+function toggleProfileMenu() {
+  const menu = document.getElementById('profile-dropdown-menu');
+  if (menu) menu.classList.toggle('show');
+}
+
+function doLogout(event) {
+  if (event) event.preventDefault();
+  if (!confirm('Are you sure you want to logout?')) return;
+  localStorage.removeItem('bloom_session');
+  location.reload();
+}
+
+// Close profile menu when clicking outside
+document.addEventListener('click', (e) => {
+  const profileDropdown = document.querySelector('.profile-dropdown');
+  if (profileDropdown && !profileDropdown.contains(e.target)) {
+    const menu = document.getElementById('profile-dropdown-menu');
+    if (menu) menu.classList.remove('show');
+  }
+});
 
 // =============================================
 // POPUP / REMINDER
@@ -209,6 +287,11 @@ function saveFitness() {
   drawFitnessChart();
   generateSuggestions();
   showMsg('fitness-msg', '✅ Activity saved! Keep moving, queen! 💪', 'success');
+  // Award points & check badges
+  if (typeof awardPoints === 'function') {
+    awardPoints(15, 'Logged fitness activity');
+    checkBadges();
+  }
 }
 
 function updateFitnessRings() {
@@ -321,6 +404,10 @@ function logMood(mood) {
   renderMoodHistory();
   updateTrackerMood();
   generateSuggestions();
+  if (typeof awardPoints === 'function') {
+    awardPoints(8, `Logged mood: ${mood}`);
+    checkBadges();
+  }
 }
 
 function renderMoodHistory() {
@@ -395,6 +482,7 @@ function runPhase(phase, seconds) {
           stopBreathing();
           if (lbl) lbl.textContent = 'Complete! 🌸';
           showMsg('mood-msg', '🌸 Breathing exercise complete! You should feel calmer now.', 'success');
+          if (typeof trackBreathSession === 'function') trackBreathSession();
         } else {
           runPhase('inhale', 4);
         }
@@ -444,6 +532,17 @@ function saveMeals() {
   updateTrackerMeals();
   generateSuggestions();
   showMsg('meal-msg', '✅ Meals saved! Nourishing your body is an act of self-love. 🌿', 'success');
+  if (typeof awardPoints === 'function') {
+    const m = load('meals', {});
+    const pts = [m.breakfast, m.lunch, m.dinner].filter(Boolean).length * 5;
+    awardPoints(pts, 'Logged meals');
+    // Track full meal days
+    if (m.breakfast && m.lunch && m.dinner) {
+      const fmd = load('fullMealDays', 0) + 1;
+      save('fullMealDays', fmd);
+    }
+    checkBadges();
+  }
 }
 
 function renderMealSummary() {
@@ -478,6 +577,10 @@ function updateWater(delta) {
   renderWater(w);
   updateTrackerBars();
   generateSuggestions();
+  if (delta > 0 && typeof awardPoints === 'function') {
+    awardPoints(2, 'Logged water intake');
+    checkBadges();
+  }
 }
 
 function renderWater(w) {
@@ -1150,6 +1253,7 @@ function shareDailyUpdate() {
 // =============================================
 document.addEventListener('DOMContentLoaded', () => {
   initDarkMode();
+  updateAuthNavbar();
   initReveal();
   createParticles();
   initCarousel();
@@ -1639,4 +1743,2144 @@ function getDemoFeedback() {
 document.addEventListener('DOMContentLoaded', () => {
   renderFeedbackStats();
   renderRecentFeedback();
+});
+
+// =============================================
+// ANIMATIONS.JS — Scroll progress, stagger,
+// tilt, ripple, page transitions
+// =============================================
+
+// ---- Scroll progress bar ----
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('scroll-progress');
+  if (!bar) return;
+  const scrolled = window.scrollY;
+  const total    = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.width = (scrolled / total * 100) + '%';
+}, { passive: true });
+
+// ---- Stagger children observer ----
+const staggerObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      staggerObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.stagger-children, .reveal-scale, .reveal-left').forEach(el => {
+  staggerObs.observe(el);
+});
+
+// ---- Tilt effect on cards (desktop only) ----
+function initTilt() {
+  if (window.matchMedia('(hover: none)').matches) return; // skip touch
+  document.querySelectorAll('.bloom-card, .wif-card, .blog-card, .dash-stat-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect   = card.getBoundingClientRect();
+      const x      = e.clientX - rect.left;
+      const y      = e.clientY - rect.top;
+      const cx     = rect.width  / 2;
+      const cy     = rect.height / 2;
+      const rotX   = ((y - cy) / cy) * -5;
+      const rotY   = ((x - cx) / cx) *  5;
+      card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+}
+
+// ---- Ripple on buttons ----
+function initRipple() {
+  document.querySelectorAll('.btn-bloom, .btn-auth').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      const ripple = document.createElement('span');
+      const rect   = this.getBoundingClientRect();
+      const size   = Math.max(rect.width, rect.height);
+      ripple.style.cssText = `
+        position:absolute;
+        width:${size}px;height:${size}px;
+        left:${e.clientX - rect.left - size/2}px;
+        top:${e.clientY - rect.top  - size/2}px;
+        background:rgba(255,255,255,0.3);
+        border-radius:50%;
+        transform:scale(0);
+        animation:ripple 0.55s ease-out forwards;
+        pointer-events:none;
+      `;
+      this.style.position = 'relative';
+      this.style.overflow = 'hidden';
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+  });
+}
+
+// ---- Smooth number counter for stats ----
+function animateNumber(el, target, duration = 1200, suffix = '') {
+  const start = performance.now();
+  const from  = parseInt(el.textContent) || 0;
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased    = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+    el.textContent = Math.round(from + (target - from) * eased) + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ---- Gradient text on section titles ----
+function upgradeHeadings() {
+  document.querySelectorAll('.section-title em').forEach(em => {
+    em.classList.add('grad-text-flow');
+  });
+}
+
+// ---- Add glass class to hero cards ----
+function upgradeHeroCards() {
+  document.querySelectorAll('.hero-card-float').forEach(card => {
+    card.classList.add('glass');
+  });
+}
+
+// ---- Page enter animation ----
+function pageEnter() {
+  document.body.classList.add('page-enter');
+  setTimeout(() => document.body.classList.remove('page-enter'), 600);
+}
+
+// ---- Smooth link transitions ----
+function initPageTransitions() {
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      document.body.style.opacity = '0';
+      document.body.style.transition = 'opacity 0.25s ease';
+      setTimeout(() => { window.location.href = href; }, 260);
+    });
+  });
+}
+
+// ---- Magnetic effect on FAB ----
+function initMagneticFAB() {
+  const fab = document.querySelector('.fab');
+  if (!fab || window.matchMedia('(hover: none)').matches) return;
+  fab.addEventListener('mousemove', e => {
+    const rect = fab.getBoundingClientRect();
+    const dx   = e.clientX - (rect.left + rect.width  / 2);
+    const dy   = e.clientY - (rect.top  + rect.height / 2);
+    fab.style.transform = `translate(${dx * 0.3}px, ${dy * 0.3}px) scale(1.12)`;
+  });
+  fab.addEventListener('mouseleave', () => {
+    fab.style.transform = '';
+  });
+}
+
+// ---- Particle burst on mood log ----
+function burstParticles(x, y) {
+  const emojis = ['🌸','✨','💜','💕','⭐'];
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const angle = (i / 8) * 360;
+    const dist  = 60 + Math.random() * 40;
+    const dx    = Math.cos(angle * Math.PI / 180) * dist;
+    const dy    = Math.sin(angle * Math.PI / 180) * dist;
+    p.style.cssText = `
+      position:fixed;left:${x}px;top:${y}px;
+      font-size:${0.9 + Math.random() * 0.6}rem;
+      pointer-events:none;z-index:9999;
+      transition:transform 0.7s ease-out,opacity 0.7s ease-out;
+      transform:translate(0,0);opacity:1;
+    `;
+    document.body.appendChild(p);
+    requestAnimationFrame(() => {
+      p.style.transform = `translate(${dx}px,${dy}px)`;
+      p.style.opacity   = '0';
+    });
+    setTimeout(() => p.remove(), 750);
+  }
+}
+
+// Patch logMood to trigger burst
+const _origLogMood = typeof logMood === 'function' ? logMood : null;
+if (_origLogMood) {
+  window.logMood = function(mood) {
+    _origLogMood(mood);
+    const btn = document.querySelector(`.mood-btn[data-mood="${mood}"], .mood-btn-enhanced[data-mood="${mood}"]`);
+    if (btn) {
+      const r = btn.getBoundingClientRect();
+      burstParticles(r.left + r.width / 2, r.top + r.height / 2);
+    }
+  };
+}
+
+// ---- Init all on DOM ready ----
+document.addEventListener('DOMContentLoaded', () => {
+  pageEnter();
+  initTilt();
+  initRipple();
+  upgradeHeadings();
+  upgradeHeroCards();
+  initMagneticFAB();
+  // Don't init page transitions — causes issues with onclick handlers
+  // initPageTransitions();
+});
+/**
+ * BLOOM — Auth Script (login.html & signup.html)
+ * All auth stored in localStorage (no backend)
+ */
+
+// =============================================
+// STORAGE HELPERS
+// =============================================
+
+// =============================================
+// SIMPLE HASH (not cryptographic — localStorage only)
+// =============================================
+function hashPassword(pw) {
+  let hash = 0;
+  for (let i = 0; i < pw.length; i++) {
+    hash = ((hash << 5) - hash) + pw.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash.toString(36) + pw.length.toString(36) + pw.slice(-2);
+}
+
+// =============================================
+// ROTATING QUOTES (login page)
+// =============================================
+const quotes = [
+  '"She believed she could, so she did."',
+  '"Your body is your home — take care of it."',
+  '"Self-care is not selfish. You cannot pour from an empty cup."',
+  '"Health is the greatest gift you can give yourself."',
+  '"Strong women lift each other up."',
+  '"The most courageous act is still to think for yourself. Aloud." — Coco Chanel',
+  '"Caring for myself is not self-indulgence, it is self-preservation." — Audre Lorde'
+];
+let qIdx = 0;
+function rotateQuote() {
+  const el = document.getElementById('rotating-quote');
+  if (!el) return;
+  el.style.opacity = '0';
+  setTimeout(() => {
+    qIdx = (qIdx + 1) % quotes.length;
+    el.textContent = quotes[qIdx];
+    el.style.opacity = '1';
+  }, 400);
+}
+if (document.getElementById('rotating-quote')) {
+  setInterval(rotateQuote, 5000);
+}
+
+// =============================================
+// PARTICLES
+// =============================================
+function createParticles() {
+  const c = document.getElementById('particles');
+  if (!c) return;
+  const emojis = ['🌸', '✨', '💜', '🌿', '💕'];
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    p.style.cssText = `left:${Math.random()*100}%;font-size:${0.7+Math.random()*1}rem;animation-duration:${10+Math.random()*12}s;animation-delay:${Math.random()*8}s`;
+    c.appendChild(p);
+  }
+}
+createParticles();
+
+// =============================================
+// PASSWORD EYE TOGGLE
+// =============================================
+function toggleEye(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isText = input.type === 'text';
+  input.type = isText ? 'password' : 'text';
+  btn.querySelector('i').className = isText ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash';
+}
+
+// =============================================
+// TERMS MODAL
+// =============================================
+function showTermsModal(e) {
+  if (e) e.preventDefault();
+  document.getElementById('terms-modal')?.classList.remove('hidden');
+}
+function hideTermsModal() {
+  document.getElementById('terms-modal')?.classList.add('hidden');
+}
+
+// =============================================
+// FIELD VALIDATION HELPERS
+// =============================================
+function setErr(id, msg) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = msg;
+}
+function clearErr(id) { setErr(id, ''); }
+
+function markField(inputId, valid) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  el.classList.toggle('valid',   valid);
+  el.classList.toggle('invalid', !valid);
+}
+
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// =============================================
+// LOGIN
+// =============================================
+function doLogin(e) {
+  if (e) e.preventDefault();
+
+  const email    = document.getElementById('email')?.value.trim();
+  const password = document.getElementById('password')?.value;
+  const remember = document.getElementById('remember')?.checked;
+
+  // Clear previous errors
+  clearErr('email-err'); clearErr('password-err');
+  hideAlert('login-error'); hideAlert('login-success');
+
+  let valid = true;
+
+  if (!email || !validateEmail(email)) {
+    setErr('email-err', 'Please enter a valid email address.');
+    markField('email', false); valid = false;
+  } else { markField('email', true); }
+
+  if (!password) {
+    setErr('password-err', 'Please enter your password.');
+    markField('password', false); valid = false;
+  } else { markField('password', true); }
+
+  if (!valid) return;
+
+  // Show loading
+  setLoading('login-btn', 'login-btn-text', 'login-spinner', true);
+
+  setTimeout(() => {
+    const users = lsGet('bloom_users', []);
+    const user  = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+    if (!user || user.passwordHash !== hashPassword(password)) {
+      setLoading('login-btn', 'login-btn-text', 'login-spinner', false);
+      showAlert('login-error', 'login-error-msg', 'Incorrect email or password. Please try again.');
+      markField('password', false);
+      return;
+    }
+
+    // Success — create session
+    const session = {
+      userId:    user.id,
+      name:      user.fname,
+      email:     user.email,
+      goal:      user.goal,
+      ageGroup:  user.ageGroup,
+      loginTime: Date.now(),
+      remember
+    };
+    lsSet('bloom_session', session);
+    if (remember) lsSet('bloom_remember_email', email);
+
+    showAlert('login-success');
+    setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+  }, 900);
+}
+
+// =============================================
+// DEMO & GUEST LOGIN
+// =============================================
+function demoLogin() {
+  // Create or reuse demo account
+  const users = lsGet('bloom_users', []);
+  let demo = users.find(u => u.email === 'demo@bloomwellness.app');
+  if (!demo) {
+    demo = {
+      id: 'demo-001', fname: 'Demo', lname: 'User',
+      email: 'demo@bloomwellness.app',
+      passwordHash: hashPassword('Demo@1234'),
+      goal: 'General self-care', ageGroup: '25-34',
+      createdAt: Date.now()
+    };
+    users.push(demo);
+    lsSet('bloom_users', users);
+  }
+  lsSet('bloom_session', { userId: demo.id, name: 'Demo', email: demo.email, goal: demo.goal, loginTime: Date.now() });
+  showAlert('login-success');
+  setTimeout(() => { window.location.href = 'index.html'; }, 900);
+}
+
+function guestLogin() {
+  lsSet('bloom_session', { userId: 'guest', name: 'Guest', email: '', goal: '', loginTime: Date.now(), isGuest: true });
+  window.location.href = 'index.html';
+}
+
+// =============================================
+// SIGNUP — MULTI-STEP
+// =============================================
+let currentStep = 1;
+let selectedGoal = '';
+
+function selectGoal(btn) {
+  document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedGoal = btn.dataset.val;
+  clearErr('goal-err');
+}
+
+function nextStep(from) {
+  if (from === 1 && !validateStep1()) return;
+  if (from === 2 && !validateStep2()) return;
+
+  document.getElementById(`step-${from}`)?.classList.add('hidden');
+  document.getElementById(`step-${from + 1}`)?.classList.remove('hidden');
+  currentStep = from + 1;
+  updateProgress(currentStep);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevStep(from) {
+  document.getElementById(`step-${from}`)?.classList.add('hidden');
+  document.getElementById(`step-${from - 1}`)?.classList.remove('hidden');
+  currentStep = from - 1;
+  updateProgress(currentStep);
+}
+
+function updateProgress(step) {
+  [1, 2, 3].forEach(n => {
+    const el = document.getElementById(`sp-${n}`);
+    if (!el) return;
+    el.classList.remove('active', 'done');
+    if (n < step)  el.classList.add('done');
+    if (n === step) el.classList.add('active');
+  });
+}
+
+function validateStep1() {
+  const fname = document.getElementById('fname')?.value.trim();
+  const lname = document.getElementById('lname')?.value.trim();
+  const email = document.getElementById('su-email')?.value.trim();
+  const age   = document.getElementById('age-group')?.value;
+  let ok = true;
+
+  clearErr('fname-err'); clearErr('lname-err'); clearErr('su-email-err'); clearErr('age-err');
+
+  if (!fname) { setErr('fname-err', 'First name is required.'); markField('fname', false); ok = false; }
+  else { markField('fname', true); }
+
+  if (!lname) { setErr('lname-err', 'Last name is required.'); markField('lname', false); ok = false; }
+  else { markField('lname', true); }
+
+  if (!email || !validateEmail(email)) {
+    setErr('su-email-err', 'Please enter a valid email address.'); markField('su-email', false); ok = false;
+  } else {
+    // Check if email already exists
+    const users = lsGet('bloom_users', []);
+    if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+      setErr('su-email-err', 'An account with this email already exists.'); markField('su-email', false); ok = false;
+    } else { markField('su-email', true); }
+  }
+
+  if (!age) { setErr('age-err', 'Please select your age group.'); ok = false; }
+
+  return ok;
+}
+
+function validateStep2() {
+  const activity = document.getElementById('activity-level')?.value;
+  let ok = true;
+  clearErr('goal-err'); clearErr('activity-err');
+
+  if (!selectedGoal) { setErr('goal-err', 'Please select your primary wellness goal.'); ok = false; }
+  if (!activity)     { setErr('activity-err', 'Please select your activity level.'); ok = false; }
+
+  return ok;
+}
+
+function doSignup(e) {
+  if (e) e.preventDefault();
+
+  const pw      = document.getElementById('su-password')?.value;
+  const confirm = document.getElementById('su-confirm')?.value;
+  const terms   = document.getElementById('agree-terms')?.checked;
+
+  clearErr('su-pw-err'); clearErr('confirm-err'); clearErr('terms-err');
+  hideAlert('signup-error'); hideAlert('signup-success');
+
+  let ok = true;
+
+  if (!pw || pw.length < 8) {
+    setErr('su-pw-err', 'Password must be at least 8 characters.'); markField('su-password', false); ok = false;
+  } else { markField('su-password', true); }
+
+  if (pw !== confirm) {
+    setErr('confirm-err', 'Passwords do not match.'); markField('su-confirm', false); ok = false;
+  } else if (confirm) { markField('su-confirm', true); }
+
+  if (!terms) { setErr('terms-err', 'You must agree to the Terms of Service.'); ok = false; }
+
+  if (!ok) return;
+
+  setLoading('signup-btn', 'signup-btn-text', 'signup-spinner', true);
+
+  setTimeout(() => {
+    const fname    = document.getElementById('fname')?.value.trim();
+    const lname    = document.getElementById('lname')?.value.trim();
+    const email    = document.getElementById('su-email')?.value.trim();
+    const ageGroup = document.getElementById('age-group')?.value;
+    const activity = document.getElementById('activity-level')?.value;
+    const conditions = document.getElementById('health-conditions')?.value.trim() || '';
+    const marketing  = document.getElementById('marketing-opt')?.checked || false;
+
+    const newUser = {
+      id:           `user-${Date.now()}`,
+      fname, lname, email,
+      passwordHash: hashPassword(pw),
+      goal:         selectedGoal,
+      ageGroup, activity, conditions, marketing,
+      createdAt:    Date.now()
+    };
+
+    const users = lsGet('bloom_users', []);
+    users.push(newUser);
+    lsSet('bloom_users', users);
+
+    // Auto-login
+    lsSet('bloom_session', {
+      userId: newUser.id, name: fname, email,
+      goal: selectedGoal, ageGroup, loginTime: Date.now()
+    });
+
+    showAlert('signup-success');
+    setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+  }, 1000);
+}
+
+// =============================================
+// PASSWORD STRENGTH CHECKER
+// =============================================
+function checkStrength(pw) {
+  const rules = {
+    len:     pw.length >= 8,
+    upper:   /[A-Z]/.test(pw),
+    num:     /[0-9]/.test(pw),
+    special: /[^A-Za-z0-9]/.test(pw)
+  };
+
+  // Update rule indicators
+  const ruleMap = { len: 'rule-len', upper: 'rule-upper', num: 'rule-num', special: 'rule-special' };
+  Object.entries(ruleMap).forEach(([key, id]) => {
+    document.getElementById(id)?.classList.toggle('pass', rules[key]);
+  });
+
+  const score = Object.values(rules).filter(Boolean).length;
+  const segs  = ['seg1','seg2','seg3','seg4'];
+  const colors = ['', 'weak', 'fair', 'good', 'strong'];
+  const labels = ['Enter a password', 'Weak', 'Fair', 'Good', 'Strong 💪'];
+
+  segs.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'pw-seg';
+    if (i < score) el.classList.add(colors[score]);
+  });
+
+  const lbl = document.getElementById('pw-strength-label');
+  if (lbl) lbl.textContent = pw.length ? labels[score] : labels[0];
+}
+
+function checkMatch() {
+  const pw  = document.getElementById('su-password')?.value;
+  const con = document.getElementById('su-confirm')?.value;
+  if (!con) return;
+  if (pw === con) { markField('su-confirm', true); clearErr('confirm-err'); }
+  else            { markField('su-confirm', false); setErr('confirm-err', 'Passwords do not match.'); }
+}
+
+// =============================================
+// UI HELPERS
+// =============================================
+function setLoading(btnId, textId, spinnerId, loading) {
+  const btn     = document.getElementById(btnId);
+  const textEl  = document.getElementById(textId);
+  const spinner = document.getElementById(spinnerId);
+  if (btn)     btn.disabled = loading;
+  if (textEl)  textEl.style.opacity = loading ? '0' : '1';
+  if (spinner) spinner.classList.toggle('hidden', !loading);
+}
+
+function showAlert(id, msgId, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('hidden');
+  if (msgId && msg) {
+    const msgEl = document.getElementById(msgId);
+    if (msgEl) msgEl.textContent = msg;
+  }
+}
+
+function hideAlert(id) {
+  document.getElementById(id)?.classList.add('hidden');
+}
+
+// =============================================
+// FORGOT PASSWORD (simple localStorage reset)
+// =============================================
+function doForgot() {
+  const email = document.getElementById('forgot-email')?.value.trim();
+  const msgEl = document.getElementById('forgot-msg');
+  if (!email || !validateEmail(email)) {
+    if (msgEl) { msgEl.textContent = 'Please enter a valid email address.'; msgEl.className = 'auth-alert auth-alert-error'; msgEl.classList.remove('hidden'); }
+    return;
+  }
+  const users = lsGet('bloom_users', []);
+  const user  = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  // Always show success (security best practice — don't reveal if email exists)
+  if (msgEl) {
+    msgEl.textContent = `If an account exists for ${email}, a reset link has been sent. (Demo: since this is localStorage-based, use the Demo Account to access the app.)`;
+    msgEl.className = 'auth-alert auth-alert-success';
+    msgEl.classList.remove('hidden');
+  }
+}
+
+// =============================================
+// SESSION CHECK — called from index.html
+// =============================================
+function checkSession() {
+  const session = lsGet('bloom_session', null);
+  if (!session) {
+    window.location.href = 'login.html';
+    return null;
+  }
+  // Session expires after 7 days (unless remember me)
+  const maxAge = session.remember ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+  if (Date.now() - session.loginTime > maxAge) {
+    localStorage.removeItem('bloom_session');
+    window.location.href = 'login.html';
+    return null;
+  }
+  return session;
+}
+
+function logout() {
+  localStorage.removeItem('bloom_session');
+  window.location.href = 'login.html';
+}
+
+function getSession() {
+  return lsGet('bloom_session', null);
+}
+/**
+ * BLOOM — Badges, Achievements & Points System
+ * badges.js — loaded after script.js
+ */
+
+// =============================================
+// BADGES DEFINITION ARRAY
+// Each badge: id, name, icon, desc, cat,
+//   rarity, points, condition(data) → boolean
+// =============================================
+const BADGES = [
+
+  // ── FITNESS ──────────────────────────────
+  {
+    id: 'first-steps', name: 'First Steps', icon: '👟',
+    desc: 'Log your first activity', cat: 'fitness', rarity: 'common', points: 10,
+    condition: d => (d.fitness.steps || 0) > 0
+  },
+  {
+    id: 'step-queen', name: 'Step Queen', icon: '👑',
+    desc: 'Hit 10,000 steps in a day', cat: 'fitness', rarity: 'rare', points: 50,
+    condition: d => (d.fitness.steps || 0) >= 10000
+  },
+  {
+    id: 'marathon-walker', name: 'Marathon Walker', icon: '🏅',
+    desc: 'Log 50,000 total steps', cat: 'fitness', rarity: 'epic', points: 150,
+    condition: d => d.totalSteps >= 50000
+  },
+  {
+    id: 'workout-warrior', name: 'Workout Warrior', icon: '💪',
+    desc: 'Complete a 60-minute workout', cat: 'fitness', rarity: 'rare', points: 40,
+    condition: d => (d.fitness.workoutTime || 0) >= 60
+  },
+  {
+    id: 'calorie-crusher', name: 'Calorie Crusher', icon: '🔥',
+    desc: 'Burn 500+ calories in one day', cat: 'fitness', rarity: 'rare', points: 45,
+    condition: d => (d.fitness.calories || 0) >= 500
+  },
+  {
+    id: 'yoga-goddess', name: 'Yoga Goddess', icon: '🧘‍♀️',
+    desc: 'Log Yoga as your workout type', cat: 'fitness', rarity: 'common', points: 20,
+    condition: d => d.fitness.type === 'Yoga'
+  },
+  {
+    id: 'dancer', name: 'Dancing Queen', icon: '💃',
+    desc: 'Log Dance as your workout type', cat: 'fitness', rarity: 'common', points: 20,
+    condition: d => d.fitness.type === 'Dance'
+  },
+  {
+    id: 'swimmer', name: 'Mermaid Mode', icon: '🏊‍♀️',
+    desc: 'Log Swimming as your workout', cat: 'fitness', rarity: 'rare', points: 35,
+    condition: d => d.fitness.type === 'Swimming'
+  },
+  {
+    id: 'hiit-hero', name: 'HIIT Hero', icon: '⚡',
+    desc: 'Complete a HIIT workout', cat: 'fitness', rarity: 'rare', points: 40,
+    condition: d => d.fitness.type === 'HIIT'
+  },
+  {
+    id: 'fitness-legend', name: 'Fitness Legend', icon: '🌟',
+    desc: 'Log activity for 30 days total', cat: 'fitness', rarity: 'legendary', points: 300,
+    condition: d => d.fitnessHistory.length >= 30
+  },
+
+  // ── MENTAL WELLNESS ───────────────────────
+  {
+    id: 'mood-logger', name: 'Mood Logger', icon: '😊',
+    desc: 'Log your first mood', cat: 'mental', rarity: 'common', points: 10,
+    condition: d => d.moodHistory.length >= 1
+  },
+  {
+    id: 'emotional-explorer', name: 'Emotional Explorer', icon: '🌈',
+    desc: 'Log 5 different moods', cat: 'mental', rarity: 'rare', points: 40,
+    condition: d => new Set(d.moodHistory.map(m => m.mood)).size >= 5
+  },
+  {
+    id: 'radiant-soul', name: 'Radiant Soul', icon: '🤩',
+    desc: 'Log "Radiant" mood 3 times', cat: 'mental', rarity: 'rare', points: 50,
+    condition: d => d.moodHistory.filter(m => m.mood === 'Radiant').length >= 3
+  },
+  {
+    id: 'grateful-heart', name: 'Grateful Heart', icon: '🥰',
+    desc: 'Log "Grateful" mood 5 times', cat: 'mental', rarity: 'epic', points: 80,
+    condition: d => d.moodHistory.filter(m => m.mood === 'Grateful').length >= 5
+  },
+  {
+    id: 'calm-queen', name: 'Calm Queen', icon: '😌',
+    desc: 'Log "Calm" mood 7 times', cat: 'mental', rarity: 'epic', points: 90,
+    condition: d => d.moodHistory.filter(m => m.mood === 'Calm').length >= 7
+  },
+  {
+    id: 'resilient', name: 'Resilient', icon: '🌿',
+    desc: 'Log mood for 14 consecutive days', cat: 'mental', rarity: 'legendary', points: 200,
+    condition: d => d.moodHistory.length >= 14
+  },
+  {
+    id: 'breath-master', name: 'Breath Master', icon: '🌬️',
+    desc: 'Complete 4 breathing cycles', cat: 'mental', rarity: 'rare', points: 30,
+    condition: d => (d.breathCycles || 0) >= 4
+  },
+  {
+    id: 'mindful-warrior', name: 'Mindful Warrior', icon: '🧠',
+    desc: 'Complete 10 breathing sessions', cat: 'mental', rarity: 'epic', points: 100,
+    condition: d => (d.totalBreathSessions || 0) >= 10
+  },
+
+  // ── NUTRITION ─────────────────────────────
+  {
+    id: 'first-meal', name: 'First Bite', icon: '🍽️',
+    desc: 'Log your first meal', cat: 'nutrition', rarity: 'common', points: 10,
+    condition: d => !!(d.meals.breakfast || d.meals.lunch || d.meals.dinner)
+  },
+  {
+    id: 'full-day', name: 'Full Day Nourished', icon: '🥗',
+    desc: 'Log all 3 meals in one day', cat: 'nutrition', rarity: 'rare', points: 40,
+    condition: d => !!(d.meals.breakfast && d.meals.lunch && d.meals.dinner)
+  },
+  {
+    id: 'hydration-hero', name: 'Hydration Hero', icon: '💧',
+    desc: 'Drink 8 glasses of water', cat: 'nutrition', rarity: 'rare', points: 35,
+    condition: d => (d.water || 0) >= 8
+  },
+  {
+    id: 'super-hydrated', name: 'Super Hydrated', icon: '🌊',
+    desc: 'Drink 10+ glasses of water', cat: 'nutrition', rarity: 'epic', points: 70,
+    condition: d => (d.water || 0) >= 10
+  },
+  {
+    id: 'snack-smart', name: 'Snack Smart', icon: '🍎',
+    desc: 'Log a healthy snack', cat: 'nutrition', rarity: 'common', points: 15,
+    condition: d => !!d.meals.snacks
+  },
+  {
+    id: 'nutrition-queen', name: 'Nutrition Queen', icon: '👸',
+    desc: 'Log all meals for 7 days', cat: 'nutrition', rarity: 'legendary', points: 250,
+    condition: d => d.fullMealDays >= 7
+  },
+
+  // ── STREAKS ───────────────────────────────
+  {
+    id: 'streak-3', name: '3-Day Streak', icon: '🔥',
+    desc: 'Log activity 3 days in a row', cat: 'streak', rarity: 'common', points: 30,
+    condition: d => (d.streak || 0) >= 3
+  },
+  {
+    id: 'streak-7', name: 'Week Warrior', icon: '🗓️',
+    desc: 'Log activity 7 days in a row', cat: 'streak', rarity: 'rare', points: 75,
+    condition: d => (d.streak || 0) >= 7
+  },
+  {
+    id: 'streak-14', name: 'Fortnight Force', icon: '⚡',
+    desc: 'Log activity 14 days in a row', cat: 'streak', rarity: 'epic', points: 150,
+    condition: d => (d.streak || 0) >= 14
+  },
+  {
+    id: 'streak-30', name: 'Monthly Maven', icon: '🌙',
+    desc: 'Log activity 30 days in a row', cat: 'streak', rarity: 'legendary', points: 400,
+    condition: d => (d.streak || 0) >= 30
+  },
+  {
+    id: 'comeback-queen', name: 'Comeback Queen', icon: '💫',
+    desc: 'Return after a 3+ day break', cat: 'streak', rarity: 'rare', points: 50,
+    condition: d => (d.comebackCount || 0) >= 1
+  },
+
+  // ── SPECIAL ───────────────────────────────
+  {
+    id: 'early-bird', name: 'Early Bird', icon: '🌅',
+    desc: 'Log activity before 8 AM', cat: 'special', rarity: 'rare', points: 40,
+    condition: d => (d.earlyLogs || 0) >= 1
+  },
+  {
+    id: 'night-owl', name: 'Night Owl', icon: '🦉',
+    desc: 'Log mood after 10 PM', cat: 'special', rarity: 'rare', points: 35,
+    condition: d => (d.nightLogs || 0) >= 1
+  },
+  {
+    id: 'perfect-score', name: 'Perfect Score', icon: '💯',
+    desc: 'Achieve a wellness score of 90+', cat: 'special', rarity: 'epic', points: 120,
+    condition: d => (d.maxScore || 0) >= 90
+  },
+  {
+    id: 'bloom-legend', name: 'Bloom Legend', icon: '🌸',
+    desc: 'Earn 1000 total points', cat: 'special', rarity: 'legendary', points: 500,
+    condition: d => (d.totalPoints || 0) >= 1000
+  },
+  {
+    id: 'ai-explorer', name: 'AI Explorer', icon: '🤖',
+    desc: 'Send your first AI Coach message', cat: 'special', rarity: 'common', points: 20,
+    condition: d => (d.aiMessages || 0) >= 1
+  },
+  {
+    id: 'feedback-giver', name: 'Voice of Bloom', icon: '💬',
+    desc: 'Submit your first feedback', cat: 'special', rarity: 'common', points: 25,
+    condition: d => (d.feedbackCount || 0) >= 1
+  }
+];
+
+// =============================================
+// LEVELS DEFINITION
+// =============================================
+const LEVELS = [
+  { level: 1,  title: 'Seedling 🌱',      min: 0    },
+  { level: 2,  title: 'Sprout 🌿',         min: 100  },
+  { level: 3,  title: 'Blossom 🌸',        min: 250  },
+  { level: 4,  title: 'Bloom 🌺',          min: 500  },
+  { level: 5,  title: 'Radiant 🌟',        min: 900  },
+  { level: 6,  title: 'Goddess 👸',        min: 1400 },
+  { level: 7,  title: 'Champion 🏆',       min: 2000 },
+  { level: 8,  title: 'Legend 💫',         min: 3000 },
+  { level: 9,  title: 'Immortal 🌙',       min: 4500 },
+  { level: 10, title: 'Bloom Legend 🌸✨', min: 6500 }
+];
+
+// =============================================
+// BUILD DATA SNAPSHOT for condition checks
+// =============================================
+function buildAchievementData() {
+  const fitness      = load('fitness', {});
+  const fitnessHist  = load('fitnessHistory', []);
+  const moodHistory  = load('moodHistory', []);
+  const meals        = load('meals', {});
+  const water        = load('water', 0);
+  const streak       = load('streak', 0);
+  const totalPoints  = load('totalPoints', 0);
+  const maxScore     = load('maxScore', 0);
+  const aiMessages   = load('aiMessages', 0);
+  const feedbackCount = load('feedbackEntries', []).length;
+  const breathCycles = load('totalBreathCycles', 0);
+  const totalBreathSessions = load('totalBreathSessions', 0);
+  const earlyLogs    = load('earlyLogs', 0);
+  const nightLogs    = load('nightLogs', 0);
+  const comebackCount = load('comebackCount', 0);
+
+  // Total steps across all history
+  const totalSteps = fitnessHist.reduce((s, e) => s + (parseInt(e.steps) || 0), 0);
+
+  // Days with all 3 meals logged
+  const fullMealDays = load('fullMealDays', 0);
+
+  return {
+    fitness, fitnessHistory: fitnessHist,
+    moodHistory, meals, water, streak,
+    totalPoints, maxScore, aiMessages, feedbackCount,
+    breathCycles, totalBreathSessions,
+    earlyLogs, nightLogs, comebackCount,
+    totalSteps, fullMealDays
+  };
+}
+
+// =============================================
+// CHECK & AWARD BADGES
+// =============================================
+function checkBadges(silent = false) {
+  const data    = buildAchievementData();
+  const earned  = load('earnedBadges', []);
+  const newOnes = [];
+
+  BADGES.forEach(badge => {
+    if (earned.includes(badge.id)) return; // already earned
+    try {
+      if (badge.condition(data)) {
+        earned.push(badge.id);
+        newOnes.push(badge);
+        awardPoints(badge.points, `Earned badge: ${badge.name}`);
+      }
+    } catch { /* skip if data missing */ }
+  });
+
+  if (newOnes.length) {
+    save('earnedBadges', earned);
+    if (!silent) {
+      // Show toast for each new badge (staggered)
+      newOnes.forEach((badge, i) => {
+        setTimeout(() => showAchievementToast(badge), i * 1800);
+      });
+    }
+  }
+
+  renderBadgesGrid();
+  renderAchievementStats();
+  return newOnes;
+}
+
+// =============================================
+// POINTS SYSTEM
+// =============================================
+function awardPoints(pts, reason = '') {
+  const current = load('totalPoints', 0);
+  const newTotal = current + pts;
+  save('totalPoints', newTotal);
+
+  // Track max score
+  const score = calculateScore ? calculateScore() : 0;
+  if (score > load('maxScore', 0)) save('maxScore', score);
+
+  // Add to points history
+  const hist = load('pointsHistory', []);
+  hist.unshift({
+    pts, reason,
+    date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric' }),
+    time: new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' })
+  });
+  if (hist.length > 50) hist.pop();
+  save('pointsHistory', hist);
+
+  renderPointsHistory();
+  renderAchievementStats();
+  updateLevelProgress();
+}
+
+function getLevel(points) {
+  let current = LEVELS[0];
+  for (const lvl of LEVELS) {
+    if (points >= lvl.min) current = lvl;
+    else break;
+  }
+  return current;
+}
+
+function getNextLevel(points) {
+  for (const lvl of LEVELS) {
+    if (points < lvl.min) return lvl;
+  }
+  return null;
+}
+
+// =============================================
+// RENDER BADGES GRID
+// =============================================
+function renderBadgesGrid(filter = 'all') {
+  const grid   = document.getElementById('badges-grid');
+  if (!grid) return;
+  const earned = load('earnedBadges', []);
+  const data   = buildAchievementData();
+
+  const filtered = filter === 'all'    ? BADGES :
+                   filter === 'earned' ? BADGES.filter(b => earned.includes(b.id)) :
+                   BADGES.filter(b => b.cat === filter);
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state-enhanced" style="grid-column:1/-1">
+      <div class="ese-icon">🔍</div>
+      <div class="ese-title">No badges in this category yet</div>
+      <div class="ese-desc">Keep logging your wellness data to unlock badges!</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(badge => {
+    const isEarned = earned.includes(badge.id);
+    let progress = 0, progressLabel = '';
+
+    // Calculate progress for locked badges
+    if (!isEarned) {
+      try {
+        // Simple progress estimation
+        if (badge.id === 'step-queen')      { progress = Math.min(100, ((data.fitness.steps||0)/10000)*100); progressLabel = `${data.fitness.steps||0}/10,000 steps`; }
+        else if (badge.id === 'streak-7')   { progress = Math.min(100, ((data.streak||0)/7)*100); progressLabel = `${data.streak||0}/7 days`; }
+        else if (badge.id === 'streak-14')  { progress = Math.min(100, ((data.streak||0)/14)*100); progressLabel = `${data.streak||0}/14 days`; }
+        else if (badge.id === 'streak-30')  { progress = Math.min(100, ((data.streak||0)/30)*100); progressLabel = `${data.streak||0}/30 days`; }
+        else if (badge.id === 'resilient')  { progress = Math.min(100, (data.moodHistory.length/14)*100); progressLabel = `${data.moodHistory.length}/14 days`; }
+        else if (badge.id === 'marathon-walker') { progress = Math.min(100, (data.totalSteps/50000)*100); progressLabel = `${data.totalSteps.toLocaleString()}/50,000`; }
+        else if (badge.id === 'bloom-legend')    { progress = Math.min(100, ((data.totalPoints||0)/1000)*100); progressLabel = `${data.totalPoints||0}/1,000 pts`; }
+        else if (badge.id === 'fitness-legend')  { progress = Math.min(100, (data.fitnessHistory.length/30)*100); progressLabel = `${data.fitnessHistory.length}/30 days`; }
+        else if (badge.id === 'nutrition-queen') { progress = Math.min(100, ((data.fullMealDays||0)/7)*100); progressLabel = `${data.fullMealDays||0}/7 days`; }
+        else if (badge.id === 'emotional-explorer') { progress = Math.min(100, (new Set(data.moodHistory.map(m=>m.mood)).size/5)*100); progressLabel = `${new Set(data.moodHistory.map(m=>m.mood)).size}/5 moods`; }
+      } catch {}
+    }
+
+    const rarityColors = { common:'#166534,#f0fdf4', rare:'#1d4ed8,#eff6ff', epic:'#7c3aed,#ede9fe', legendary:'#92400e,#fef9c3' };
+    const [rc, rbg] = (rarityColors[badge.rarity] || '').split(',');
+
+    return `
+    <div class="badge-card badge-cat-${badge.cat} ${isEarned ? '' : 'locked'} ${badge.rarity === 'legendary' ? 'legendary-card' : ''}"
+         onclick="showBadgeDetail('${badge.id}')"
+         title="${badge.name}: ${badge.desc}">
+      <span class="badge-rarity" style="color:${rc};background:${rbg}">${badge.rarity}</span>
+      <div class="badge-icon-wrap">
+        <span class="badge-icon">${badge.icon}</span>
+        <div class="badge-shine"></div>
+        ${!isEarned ? '<div class="badge-lock">🔒</div>' : ''}
+      </div>
+      <div class="badge-name">${badge.name}</div>
+      <div class="badge-desc">${badge.desc}</div>
+      ${isEarned
+        ? `<div class="badge-earned-date">✅ Earned! +${badge.points}pts</div>`
+        : progress > 0
+          ? `<div class="badge-progress-mini"><div class="badge-progress-fill" style="width:${progress}%"></div></div>
+             <div class="badge-progress-label">${progressLabel}</div>`
+          : `<div class="badge-progress-label">${badge.points} pts reward</div>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function filterBadges(cat, btn) {
+  document.querySelectorAll('.ach-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBadgesGrid(cat);
+}
+
+// =============================================
+// BADGE DETAIL MODAL (simple alert for now)
+// =============================================
+function showBadgeDetail(id) {
+  const badge  = BADGES.find(b => b.id === id);
+  if (!badge) return;
+  const earned = load('earnedBadges', []).includes(id);
+  const status = earned ? '✅ You\'ve earned this badge!' : '🔒 Not yet earned — keep going!';
+  // Could be replaced with a proper modal
+  alert(`${badge.icon} ${badge.name}\n\n${badge.desc}\n\nRarity: ${badge.rarity}\nPoints: +${badge.points}\n\n${status}`);
+}
+
+// =============================================
+// ACHIEVEMENT STATS
+// =============================================
+function renderAchievementStats() {
+  const earned = load('earnedBadges', []);
+  const points = load('totalPoints', 0);
+  const streak = load('streak', 0);
+  const level  = getLevel(points);
+
+  const el = id => document.getElementById(id);
+  if (el('total-points'))      el('total-points').textContent      = points.toLocaleString();
+  if (el('badges-earned'))     el('badges-earned').textContent     = earned.length;
+  if (el('current-level'))     el('current-level').textContent     = level.level;
+  if (el('current-streak-ach'))el('current-streak-ach').textContent = streak;
+
+  updateLevelProgress();
+}
+
+function updateLevelProgress() {
+  const points  = load('totalPoints', 0);
+  const current = getLevel(points);
+  const next    = getNextLevel(points);
+  const el      = id => document.getElementById(id);
+
+  if (el('lpc-level-label')) el('lpc-level-label').textContent = `Level ${current.level} — ${current.title}`;
+  if (el('lpc-next-label'))  el('lpc-next-label').textContent  = next ? `Next: Level ${next.level}` : 'Max Level!';
+
+  const pct = next
+    ? Math.min(100, ((points - current.min) / (next.min - current.min)) * 100)
+    : 100;
+
+  const fill = el('lpc-fill');
+  if (fill) fill.style.width = pct + '%';
+
+  if (el('lpc-current-pts')) el('lpc-current-pts').textContent = `${points.toLocaleString()} pts`;
+  if (el('lpc-next-pts'))    el('lpc-next-pts').textContent    = next
+    ? `${(next.min - points).toLocaleString()} pts to Level ${next.level}`
+    : '🎉 Maximum level reached!';
+}
+
+// =============================================
+// POINTS HISTORY
+// =============================================
+function renderPointsHistory() {
+  const hist = load('pointsHistory', []);
+  const el   = document.getElementById('points-history');
+  if (!el) return;
+  if (!hist.length) { el.innerHTML = '<p class="empty-hint">Start logging to earn points!</p>'; return; }
+  el.innerHTML = hist.slice(0, 20).map(h => `
+    <div class="ph-item">
+      <div class="ph-left">
+        <span class="ph-icon">⭐</span>
+        <div>
+          <div class="ph-action">${h.reason}</div>
+          <div class="ph-date">${h.date} · ${h.time || ''}</div>
+        </div>
+      </div>
+      <span class="ph-pts ${h.pts < 0 ? 'negative' : ''}">
+        ${h.pts > 0 ? '+' : ''}${h.pts} pts
+      </span>
+    </div>`).join('');
+}
+
+// =============================================
+// ACHIEVEMENT TOAST
+// =============================================
+function showAchievementToast(badge) {
+  const toast = document.getElementById('ach-toast');
+  if (!toast) return;
+  document.getElementById('ach-toast-icon').textContent = badge.icon;
+  document.getElementById('ach-toast-name').textContent = badge.name;
+  document.getElementById('ach-toast-desc').textContent = `+${badge.points} pts — ${badge.desc}`;
+  toast.classList.remove('hidden', 'hiding');
+  // Ring the bell in navbar if present
+  const bell = document.querySelector('.notif-pulse');
+  if (bell) bell.classList.add('bell-ring');
+  setTimeout(() => {
+    toast.classList.add('hiding');
+    setTimeout(() => toast.classList.add('hidden'), 400);
+  }, 4000);
+}
+
+// =============================================
+// DAILY POINTS — award on key actions
+// =============================================
+function awardDailyPoints() {
+  const today   = new Date().toISOString().split('T')[0];
+  const lastDay = load('lastPointsDay', '');
+  if (lastDay === today) return; // already awarded today
+  save('lastPointsDay', today);
+  awardPoints(5, 'Daily login bonus');
+}
+
+// =============================================
+// TRACK AI MESSAGES
+// =============================================
+function trackAIMessage() {
+  const count = load('aiMessages', 0) + 1;
+  save('aiMessages', count);
+  if (count === 1) awardPoints(20, 'First AI Coach message');
+  checkBadges();
+}
+
+// =============================================
+// TRACK BREATH SESSIONS
+// =============================================
+function trackBreathSession() {
+  const sessions = load('totalBreathSessions', 0) + 1;
+  save('totalBreathSessions', sessions);
+  const cycles = load('totalBreathCycles', 0) + 4;
+  save('totalBreathCycles', cycles);
+  awardPoints(10, 'Completed breathing exercise');
+  checkBadges();
+}
+
+// =============================================
+// INIT ACHIEVEMENTS
+// =============================================
+document.addEventListener('DOMContentLoaded', () => {
+  awardDailyPoints();
+  checkBadges(true); // silent on load
+  renderBadgesGrid();
+  renderAchievementStats();
+  renderPointsHistory();
+});
+const fs = require('fs');
+let c = fs.readFileSync('style.css', 'utf8');
+
+const oldStr = '.chc-task.done .chc-task-check{background:linear-gradient(135deg,var(--pink),var(--purple));bor\r\nder-color:transparent;color:#fff}\r\n';
+
+const newStr = `.chc-task.done .chc-task-check{background:linear-gradient(135deg,var(--pink),var(--purple));border-color:transparent;color:#fff}
+.chc-task-text{flex:1}
+.chc-task-label{font-size:0.88rem;font-weight:600;color:var(--text);display:block}
+.chc-task-pts{font-size:0.72rem;color:var(--text-s)}
+.chc-task.done .chc-task-label{text-decoration:line-through;color:var(--text-s)}
+
+.chc-progress-wrap{margin-bottom:1.5rem}
+.chc-progress-label{display:flex;justify-content:space-between;font-size:0.82rem;color:var(--text-m);margin-bottom:0.5rem}
+.chc-progress-bar{height:12px;background:var(--border);border-radius:999px;overflow:hidden}
+.chc-progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--purple));transition:width 0.8s cubic-bezier(0.4,0,0.2,1)}
+
+.chc-points-display{display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:1rem;background:linear-gradient(135deg,rgba(249,168,212,0.1),rgba(221,214,254,0.1));border-radius:var(--r-sm);border:1px solid var(--pink-l);margin-bottom:1rem}
+.chc-pts-num{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chc-pts-label{font-size:0.82rem;color:var(--text-m)}
+
+/* Past challenges */
+.past-challenge-item{display:flex;align-items:center;gap:0.85rem;padding:0.75rem;background:var(--bg-alt);border-radius:var(--r-sm);border:1px solid var(--border);margin-bottom:0.5rem}
+.pci-icon{font-size:1.5rem;flex-shrink:0}
+.pci-name{font-size:0.85rem;font-weight:700;color:var(--text)}
+.pci-result{font-size:0.75rem;color:var(--text-m)}
+.pci-badge{margin-left:auto;font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:20px;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff}
+
+/* =============================================
+   CALENDAR VIEW
+   ============================================= */
+.calendar-wrap{background:var(--bg-card);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 4px 24px var(--shadow);border:1px solid var(--border)}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(249,168,212,0.08),rgba(221,214,254,0.08))}
+.cal-title{font-size:1.1rem;font-weight:700;color:var(--text)}
+.cal-nav{display:flex;gap:0.5rem}
+.cal-nav-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg);color:var(--text-m);display:flex;align-items:center;justify-content:center;font-size:0.85rem;cursor:pointer;transition:all var(--t)}
+.cal-nav-btn:hover{border-color:var(--pink);color:var(--pink);background:var(--rose-l)}
+.cal-today-btn{padding:0.35rem 0.85rem;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);color:var(--text-m);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all var(--t)}
+.cal-today-btn:hover{border-color:var(--pink);color:var(--pink)}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-day-header{padding:0.6rem;text-align:center;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-s);border-bottom:1px solid var(--border)}
+.cal-day{min-height:80px;padding:0.5rem;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t);position:relative}
+.cal-day:nth-child(7n){border-right:none}
+.cal-day:hover{background:var(--bg-alt)}
+.cal-day.other-month{opacity:0.35}
+.cal-day.today .cal-day-num{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.cal-day.has-data{background:linear-gradient(135deg,rgba(249,168,212,0.06),rgba(221,214,254,0.06))}
+.cal-day-num{font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:0.3rem;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.cal-day-dots{display:flex;gap:2px;flex-wrap:wrap}
+.cal-dot{width:6px;height:6px;border-radius:50%}
+.cal-dot-steps{background:#ec4899}
+.cal-dot-mood{background:#a855f7}
+.cal-dot-water{background:#60a5fa}
+.cal-dot-meal{background:#10b981}
+
+.cal-detail-panel{padding:1.5rem;border-top:1px solid var(--border);background:var(--bg-alt);min-height:120px}
+.cdp-date{font-size:0.82rem;font-weight:700;color:var(--pink);margin-bottom:0.75rem}
+.cdp-items{display:flex;flex-direction:column;gap:0.4rem}
+.cdp-item{display:flex;align-items:center;gap:0.6rem;font-size:0.85rem;color:var(--text-m)}
+.cdp-item-icon{font-size:1rem;flex-shrink:0}
+.cdp-empty{font-size:0.85rem;color:var(--text-s);font-style:italic}
+
+/* =============================================
+   BROWSER NOTIFICATIONS
+   ============================================= */
+.notif-section{}
+.notif-layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.notif-status-card{border-left:4px solid var(--pink)}
+.notif-status-row{display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;background:var(--bg-alt);border-radius:var(--r-sm);border:1px solid var(--border);margin-bottom:0.75rem}
+.nsr-left{display:flex;align-items:center;gap:0.75rem}
+.nsr-icon{font-size:1.3rem}
+.nsr-label{font-size:0.88rem;font-weight:600;color:var(--text)}
+.nsr-sub{font-size:0.75rem;color:var(--text-s)}
+.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:999px;cursor:pointer;transition:all var(--t)}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:all var(--t)}
+.toggle-switch input:checked + .toggle-slider{background:linear-gradient(135deg,var(--pink),var(--purple))}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(20px)}
+
+.notif-schedule{display:flex;flex-direction:column;gap:0.6rem}
+.ns-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:var(--bg-alt);border-radius:var(--r-sm);border:1px solid var(--border)}
+.ns-time{font-size:0.82rem;font-weight:700;color:var(--pink);min-width:50px}
+.ns-label{font-size:0.85rem;color:var(--text);flex:1}
+.ns-remove{background:none;border:none;color:var(--text-s);cursor:pointer;font-size:0.85rem;padding:0.2rem;border-radius:4px;transition:all var(--t)}
+.ns-remove:hover{color:var(--rose);background:var(--rose-l)}
+
+.notif-history{display:flex;flex-direction:column;gap:0.5rem;max-height:280px;overflow-y:auto}
+.nh-item{display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem;background:var(--bg-alt);border-radius:var(--r-sm);border:1px solid var(--border);font-size:0.85rem}
+.nh-icon{font-size:1.1rem;flex-shrink:0}
+.nh-text{flex:1;color:var(--text-m);line-height:1.5}
+.nh-time{font-size:0.72rem;color:var(--text-s);white-space:nowrap}
+.nh-item.unread{background:linear-gradient(135deg,rgba(249,168,212,0.08),rgba(221,214,254,0.08));border-color:var(--pink-l)}
+
+/* =============================================
+   ACHIEVEMENTS & BADGES
+   ============================================= */
+.achievements-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.badge-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;text-align:center;transition:all var(--t);position:relative;overflow:hidden}
+.badge-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--bc-grad,linear-gradient(90deg,var(--pink),var(--purple)))}
+.badge-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--shadow-lg)}
+.badge-card.locked{opacity:0.45;filter:grayscale(0.6)}
+.badge-card.unlocked{box-shadow:0 4px 20px var(--shadow)}
+.badge-card.new-unlock{animation:badgeUnlock 0.6s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes badgeUnlock{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.badge-emoji{font-size:2.5rem;margin-bottom:0.6rem;display:block}
+.badge-card.locked .badge-emoji{filter:grayscale(1)}
+.badge-name{font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.25rem}
+.badge-desc{font-size:0.72rem;color:var(--text-m);line-height:1.5}
+.badge-lock{font-size:0.7rem;color:var(--text-s);margin-top:0.4rem}
+.badge-new{position:absolute;top:0.5rem;right:0.5rem;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;font-size:0.6rem;font-weight:700;padding:0.15rem 0.45rem;border-radius:20px;text-transform:uppercase;letter-spacing:0.05em}
+
+.achievement-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.ach-stat{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;text-align:center;box-shadow:0 2px 12px var(--shadow)}
+.ach-stat-num{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ach-stat-label{font-size:0.78rem;color:var(--text-m);margin-top:0.2rem}
+
+.leaderboard-list{display:flex;flex-direction:column;gap:0.5rem}
+.lb-item{display:flex;align-items:center;gap:0.85rem;padding:0.75rem 1rem;background:var(--bg-alt);border-radius:var(--r-sm);border:1px solid var(--border);transition:all var(--t)}
+.lb-item:hover{border-color:var(--pink-l)}
+.lb-item.you{background:linear-gradient(135deg,rgba(249,168,212,0.1),rgba(221,214,254,0.1));border-color:var(--pink)}
+.lb-rank{font-size:1rem;font-weight:900;color:var(--text-s);min-width:28px}
+.lb-rank.gold{color:#f59e0b}
+.lb-rank.silver{color:#94a3b8}
+.lb-rank.bronze{color:#b45309}
+.lb-avatar{font-size:1.4rem;flex-shrink:0}
+.lb-name{font-size:0.88rem;font-weight:700;color:var(--text);flex:1}
+.lb-score{font-size:0.85rem;font-weight:700;color:var(--pink)}
+.lb-you-tag{font-size:0.68rem;font-weight:700;background:var(--pink);color:#fff;padding:0.1rem 0.4rem;border-radius:20px;margin-left:0.4rem}
+
+/* Toast notification */
+.toast-container{position:fixed;bottom:5rem;right:1.5rem;z-index:9000;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none}
+.toast{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:0.85rem 1.1rem;box-shadow:0 8px 24px var(--shadow-lg);display:flex;align-items:center;gap:0.75rem;font-size:0.88rem;color:var(--text);min-width:260px;max-width:340px;pointer-events:all;animation:toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+.toast.removing{animation:toastOut 0.3s ease forwards}
+@keyframes toastOut{to{opacity:0;transform:translateX(40px)}}
+.toast-icon{font-size:1.2rem;flex-shrink:0}
+.toast-msg{flex:1;line-height:1.4}
+.toast-close{background:none;border:none;color:var(--text-s);cursor:pointer;font-size:0.85rem;padding:0.1rem;flex-shrink:0}
+.toast.success{border-left:4px solid #10b981}
+.toast.info{border-left:4px solid var(--pink)}
+.toast.warning{border-left:4px solid #f59e0b}
+
+/* Responsive for new sections */
+@media(max-width:1024px){
+  .challenge-layout{grid-template-columns:1fr}
+  .challenge-sidebar{position:static}
+  .notif-layout{grid-template-columns:1fr}
+  .achievements-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:768px){
+  .achievements-grid{grid-template-columns:repeat(2,1fr)}
+  .achievement-stats{grid-template-columns:1fr 1fr}
+  .cal-day{min-height:60px;padding:0.35rem}
+  .cal-day-num{font-size:0.75rem}
+}
+@media(max-width:480px){
+  .achievements-grid{grid-template-columns:repeat(2,1fr)}
+  .achievement-stats{grid-template-columns:1fr}
+  .cal-grid{font-size:0.75rem}
+  .cal-day{min-height:48px;padding:0.25rem}
+}
+`;
+
+if (c.includes(oldStr)) {
+  const updated = c.replace(oldStr, newStr);
+  fs.writeFileSync('style.css', updated, 'utf8');
+  console.log('SUCCESS');
+} else {
+  // Try with just \n
+  const oldStr2 = '.chc-task.done .chc-task-check{background:linear-gradient(135deg,var(--pink),var(--purple));bor\nder-color:transparent;color:#fff}\n';
+  if (c.includes(oldStr2)) {
+    const updated = c.replace(oldStr2, newStr);
+    fs.writeFileSync('style.css', updated, 'utf8');
+    console.log('SUCCESS with LF');
+  } else {
+    // Find the chc-task-check area and show full content
+    const idx2 = c.indexOf('chc-task-check{width');
+    console.log('chc-task-check idx:', idx2);
+    if (idx2 >= 0) {
+      const snippet = c.slice(idx2, idx2 + 300);
+      console.log('Snippet:', JSON.stringify(snippet));
+    }
+  }
+}
+/**
+ * BLOOM — Profile Page Script (profile.js)
+ * Handles user profile display, settings, and authentication
+ */
+
+// =============================================
+// AUTH CHECK - REDIRECT IF NOT LOGGED IN
+// =============================================
+function checkAuthAndInit() {
+  const session = lsGet('bloom_session', null);
+  
+  if (!session || (session.isGuest && !session.userId)) {
+    // Not logged in or guest — redirect to login
+    window.location.href = 'login.html';
+    return false;
+  }
+  
+  initProfilePage();
+  return true;
+}
+
+// =============================================
+// INITIALIZE PROFILE PAGE
+// =============================================
+function initProfilePage() {
+  const session = lsGet('bloom_session', {});
+  updateProfileHeader(session);
+  updateProfileInfo(session);
+  loadProfileStats();
+  loadRecentActivity();
+  initDarkMode();
+}
+
+// =============================================
+// UPDATE PROFILE HEADER
+// =============================================
+function updateProfileHeader(session) {
+  const name = session.name || 'Guest User';
+  const email = session.email || 'guest@example.com';
+  const ageGroup = session.ageGroup || 'Not specified';
+  const goal = session.goal || 'No goal set';
+  
+  document.getElementById('profile-name').textContent = name;
+  document.getElementById('profile-email').textContent = email;
+  document.getElementById('profile-age').textContent = ageGroup;
+  document.getElementById('profile-goal').textContent = goal;
+  
+  // Format joined date
+  const joinDate = new Date(session.loginTime);
+  const today = new Date();
+  const daysAgo = Math.floor((today - joinDate) / (1000 * 60 * 60 * 24));
+  
+  if (daysAgo === 0) {
+    document.getElementById('profile-joined').textContent = 'today';
+  } else if (daysAgo === 1) {
+    document.getElementById('profile-joined').textContent = 'yesterday';
+  } else if (daysAgo < 7) {
+    document.getElementById('profile-joined').textContent = daysAgo + ' days ago';
+  } else {
+    document.getElementById('profile-joined').textContent = joinDate.toLocaleDateString();
+  }
+  
+  // Load avatar if exists
+  const avatar = lsGet('profile_avatar_' + session.userId, null);
+  if (avatar) {
+    const placeholder = document.querySelector('.profile-avatar-placeholder');
+    placeholder.innerHTML = `<img src="${avatar}" alt="Profile" style="width:100%; height:100%; border-radius:50%; object-fit:cover;"/>`;
+  }
+}
+
+// =============================================
+// UPDATE PROFILE INFO SECTION
+// =============================================
+function updateProfileInfo(session) {
+  document.getElementById('info-name').textContent = session.name || '—';
+  document.getElementById('info-email').textContent = session.email || '—';
+  document.getElementById('info-age').textContent = session.ageGroup || '—';
+  document.getElementById('info-goal').textContent = session.goal || '—';
+  
+  // Format joined date
+  const joinDate = new Date(session.loginTime);
+  document.getElementById('info-joined').textContent = joinDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  
+  // Last login
+  const lastLogin = new Date(session.loginTime);
+  document.getElementById('info-lastlogin').textContent = lastLogin.toLocaleString();
+}
+
+// =============================================
+// LOAD PROFILE STATS
+// =============================================
+function loadProfileStats() {
+  // Get data from localStorage
+  const fitness = lsGet('fitness', {});
+  const totalLogs = (lsGet('fitnessHistory', []) || []).length;
+  const badgesEarned = lsGet('badges_earned', []).length;
+  const currentStreak = lsGet('current_streak', 0);
+  const totalPoints = lsGet('total_points', 0);
+  
+  document.getElementById('stat-logs').textContent = totalLogs;
+  document.getElementById('stat-badges').textContent = badgesEarned;
+  document.getElementById('stat-streak').textContent = currentStreak;
+  document.getElementById('stat-points').textContent = totalPoints;
+}
+
+// =============================================
+// LOAD RECENT ACTIVITY
+// =============================================
+function loadRecentActivity() {
+  const activityList = document.getElementById('activity-list');
+  const fitnessHistory = lsGet('fitnessHistory', []);
+  const moodHistory = lsGet('mood_log', []);
+  
+  // Combine and sort recent activities
+  const activities = [];
+  
+  fitnessHistory.forEach(entry => {
+    activities.push({
+      type: 'fitness',
+      icon: '🏃',
+      action: `Logged ${entry.type} workout`,
+      detail: `${entry.workoutTime} min, ${entry.calories} cal burned`,
+      date: new Date(entry.date)
+    });
+  });
+  
+  moodHistory.forEach(entry => {
+    activities.push({
+      type: 'mood',
+      icon: '😊',
+      action: 'Logged mood',
+      detail: entry.mood,
+      date: new Date(entry.date)
+    });
+  });
+  
+  activities.sort((a, b) => b.date - a.date);
+  const recent = activities.slice(0, 10);
+  
+  if (recent.length === 0) {
+    activityList.innerHTML = '<p class="empty-state">No activity yet. Start tracking to see your activity here!</p>';
+    return;
+  }
+  
+  activityList.innerHTML = recent.map(a => `
+    <div class="activity-item">
+      <div class="activity-icon">${a.icon}</div>
+      <div class="activity-content">
+        <div class="activity-action">${a.action}</div>
+        <div class="activity-detail">${a.detail}</div>
+      </div>
+      <div class="activity-time">${formatTimeAgo(a.date)}</div>
+    </div>
+  `).join('');
+}
+
+// =============================================
+// FORMAT TIME AGO
+// =============================================
+function formatTimeAgo(date) {
+  const now = new Date();
+  const diff = now - new Date(date);
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  
+  if (seconds < 60) return 'just now';
+  if (minutes < 60) return minutes + 'm ago';
+  if (hours < 24) return hours + 'h ago';
+  if (days < 7) return days + 'd ago';
+  
+  return date.toLocaleDateString();
+}
+
+// =============================================
+// PROFILE TAB NAVIGATION
+// =============================================
+function showProfileTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('.profile-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  
+  // Remove active class from buttons
+  document.querySelectorAll('.sidebar-item').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Show selected tab
+  const tab = document.getElementById('tab-' + tabName);
+  if (tab) tab.classList.add('active');
+  
+  // Mark button as active
+  event.target.closest('.sidebar-item').classList.add('active');
+}
+
+// =============================================
+// AVATAR UPLOAD
+// =============================================
+function triggerAvatarUpload() {
+  document.getElementById('avatar-file').click();
+}
+
+function handleAvatarUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const imageData = e.target.result;
+    const session = lsGet('bloom_session', {});
+    
+    // Save avatar to localStorage
+    lsSet('profile_avatar_' + session.userId, imageData);
+    
+    // Update avatar display
+    const placeholder = document.querySelector('.profile-avatar-placeholder');
+    placeholder.innerHTML = `<img src="${imageData}" alt="Profile" style="width:100%; height:100%; border-radius:50%; object-fit:cover;"/>`;
+    
+    showNotification('Profile picture updated!', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+// =============================================
+// CHANGE PASSWORD
+// =============================================
+function showChangePasswordModal() {
+  document.getElementById('change-password-modal').classList.remove('hidden');
+}
+
+function closeChangePasswordModal() {
+  document.getElementById('change-password-modal').classList.add('hidden');
+  document.getElementById('change-password-form').reset();
+  document.getElementById('password-error').classList.add('hidden');
+  document.getElementById('password-success').classList.add('hidden');
+}
+
+function submitChangePassword(event) {
+  event.preventDefault();
+  
+  const currentPw = document.getElementById('current-pw').value;
+  const newPw = document.getElementById('new-pw').value;
+  const confirmPw = document.getElementById('confirm-pw').value;
+  const errorEl = document.getElementById('password-error');
+  const successEl = document.getElementById('password-success');
+  
+  errorEl.classList.add('hidden');
+  successEl.classList.add('hidden');
+  
+  // Validation
+  if (newPw !== confirmPw) {
+    errorEl.textContent = 'New passwords do not match.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  if (newPw.length < 6) {
+    errorEl.textContent = 'New password must be at least 6 characters.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  // Verify current password
+  const session = lsGet('bloom_session', {});
+  const users = lsGet('bloom_users', []);
+  const user = users.find(u => u.id === session.userId);
+  
+  if (!user || user.passwordHash !== hashPassword(currentPw)) {
+    errorEl.textContent = 'Current password is incorrect.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  // Update password
+  user.passwordHash = hashPassword(newPw);
+  lsSet('bloom_users', users);
+  
+  successEl.classList.remove('hidden');
+  
+  setTimeout(() => {
+    closeChangePasswordModal();
+  }, 2000);
+}
+
+// =============================================
+// SAVE NOTIFICATION SETTINGS
+// =============================================
+function saveNotificationSettings() {
+  const settings = {
+    daily: document.getElementById('notify-daily').checked,
+    weekly: document.getElementById('notify-weekly').checked,
+    achievements: document.getElementById('notify-achievements').checked
+  };
+  
+  const session = lsGet('bloom_session', {});
+  lsSet('notification_prefs_' + session.userId, settings);
+  showNotification('Notification settings saved!', 'success');
+}
+
+// =============================================
+// SAVE PREFERENCES
+// =============================================
+function savePreferences() {
+  const goal = document.getElementById('pref-goal').value;
+  
+  if (!goal) {
+    showNotification('Please select a goal.', 'error');
+    return;
+  }
+  
+  const session = lsGet('bloom_session', {});
+  session.goal = goal;
+  lsSet('bloom_session', session);
+  
+  // Update user record
+  const users = lsGet('bloom_users', []);
+  const user = users.find(u => u.id === session.userId);
+  if (user) {
+    user.goal = goal;
+    lsSet('bloom_users', users);
+  }
+  
+  updateProfileHeader(session);
+  updateProfileInfo(session);
+  showNotification('Preferences updated!', 'success');
+}
+
+// =============================================
+// SET THEME PREFERENCE
+// =============================================
+function setThemePreference(theme) {
+  const session = lsGet('bloom_session', {});
+  lsSet('theme_pref_' + session.userId, theme);
+  
+  if (theme === 'dark') {
+    document.body.classList.add('dark');
+  } else if (theme === 'light') {
+    document.body.classList.remove('dark');
+  }
+  
+  showNotification('Theme preference updated!', 'success');
+}
+
+// =============================================
+// LOGOUT FUNCTION
+// =============================================
+function doLogout() {
+  if (!confirm('Are you sure you want to logout?')) return;
+  
+  // Clear session
+  localStorage.removeItem('bloom_session');
+  
+  // Redirect to home
+  window.location.href = 'index.html';
+}
+
+// =============================================
+// NOTIFICATION HELPER
+// =============================================
+function showNotification(message, type = 'success') {
+  const div = document.createElement('div');
+  div.className = `notification notification-${type}`;
+  div.innerHTML = `
+    <div class="notification-content">
+      <i class="fa-solid fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  document.body.appendChild(div);
+  
+  setTimeout(() => {
+    div.classList.add('show');
+  }, 10);
+  
+  setTimeout(() => {
+    div.classList.remove('show');
+    setTimeout(() => div.remove(), 300);
+  }, 3000);
+}
+
+// =============================================
+// DARK MODE (from script.js)
+// =============================================
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  save('darkMode', isDark);
+  document.getElementById('dark-btn').textContent = isDark ? '☀️' : '🌙';
+}
+
+function initDarkMode() {
+  if (load('darkMode', false)) {
+    document.body.classList.add('dark');
+    const btn = document.getElementById('dark-btn');
+    if (btn) btn.textContent = '☀️';
+  }
+}
+
+// =============================================
+// STORAGE HELPERS (from auth.js)
+// =============================================
+
+// =============================================
+// INITIALIZE ON PAGE LOAD
+// =============================================
+window.addEventListener('load', checkAuthAndInit);
+
+// Also handle menu toggle
+function toggleMenu() {
+  const links = document.getElementById('nav-links');
+  const ham = document.querySelector('.hamburger');
+  if (!links) return;
+  links.classList.toggle('open');
+  const spans = ham?.querySelectorAll('span');
+  if (spans) {
+    const isOpen = links.classList.contains('open');
+    if (spans[0]) spans[0].style.transform = isOpen ? 'rotate(45deg) translate(5px,5px)' : '';
+    if (spans[1]) spans[1].style.opacity = isOpen ? '0' : '1';
+    if (spans[2]) spans[2].style.transform = isOpen ? 'rotate(-45deg) translate(5px,-5px)' : '';
+  }
+}
+// Nutrition Planner JavaScript
+
+// Sample recipes data
+const recipes = [
+    {
+        id: 1,
+        name: "Avocado Toast",
+        category: "breakfast",
+        calories: 320,
+        ingredients: ["2 slices whole grain bread", "1 avocado", "1 tomato", "Salt and pepper"]
+    },
+    {
+        id: 2,
+        name: "Greek Salad",
+        category: "lunch",
+        calories: 280,
+        ingredients: ["2 cups lettuce", "1 cucumber", "1 tomato", "1/2 cup feta cheese", "Olive oil", "Lemon juice"]
+    },
+    {
+        id: 3,
+        name: "Grilled Chicken Stir-Fry",
+        category: "dinner",
+        calories: 450,
+        ingredients: ["4 oz chicken breast", "1 cup broccoli", "1 bell pepper", "1 carrot", "Soy sauce", "Garlic"]
+    },
+    {
+        id: 4,
+        name: "Berry Smoothie",
+        category: "snacks",
+        calories: 180,
+        ingredients: ["1 cup mixed berries", "1 banana", "1 cup yogurt", "1 tbsp honey"]
+    },
+    {
+        id: 5,
+        name: "Oatmeal with Fruits",
+        category: "breakfast",
+        calories: 250,
+        ingredients: ["1/2 cup oats", "1 apple", "1/2 cup milk", "Cinnamon"]
+    },
+    {
+        id: 6,
+        name: "Quinoa Bowl",
+        category: "lunch",
+        calories: 380,
+        ingredients: ["1/2 cup quinoa", "1 cup spinach", "1/2 avocado", "Cherry tomatoes", "Balsamic vinegar"]
+    },
+    {
+        id: 7,
+        name: "Salmon with Vegetables",
+        category: "dinner",
+        calories: 420,
+        ingredients: ["4 oz salmon fillet", "1 cup asparagus", "1 sweet potato", "Olive oil", "Herbs"]
+    },
+    {
+        id: 8,
+        name: "Yogurt Parfait",
+        category: "snacks",
+        calories: 220,
+        ingredients: ["1 cup Greek yogurt", "1/2 cup granola", "1/2 cup berries", "1 tbsp honey"]
+    }
+];
+
+// Current selected day
+let currentDay = 'monday';
+
+// Load meal plan from localStorage
+function loadMealPlan() {
+    const plan = JSON.parse(localStorage.getItem('mealPlan') || '{}');
+    return plan;
+}
+
+// Save meal plan to localStorage
+function saveMealPlan(plan) {
+    localStorage.setItem('mealPlan', JSON.stringify(plan));
+}
+
+// Populate recipe selects
+function populateRecipeSelects() {
+    const selects = document.querySelectorAll('.recipe-select');
+    selects.forEach(select => {
+        select.innerHTML = '<option value="">Select Recipe</option>';
+        recipes.forEach(recipe => {
+            const option = document.createElement('option');
+            option.value = recipe.id;
+            option.textContent = recipe.name;
+            select.appendChild(option);
+        });
+    });
+}
+
+// Update meal plan display
+function updateMealPlanDisplay() {
+    const plan = loadMealPlan();
+    const dayPlan = plan[currentDay] || {};
+
+    document.querySelectorAll('.meal-slot').forEach(slot => {
+        const meal = slot.dataset.meal;
+        const select = slot.querySelector('.recipe-select');
+        if (dayPlan[meal]) {
+            select.value = dayPlan[meal];
+        } else {
+            select.value = '';
+        }
+    });
+
+    updateCalorieTracker();
+}
+
+// Add recipe to meal plan
+function addRecipeToPlan(meal, recipeId) {
+    const plan = loadMealPlan();
+    if (!plan[currentDay]) plan[currentDay] = {};
+    plan[currentDay][meal] = recipeId;
+    saveMealPlan(plan);
+    updateMealPlanDisplay();
+}
+
+// Update calorie tracker
+function updateCalorieTracker() {
+    const plan = loadMealPlan();
+    const dayPlan = plan[currentDay] || {};
+    let totalCalories = 0;
+
+    Object.values(dayPlan).forEach(recipeId => {
+        const recipe = recipes.find(r => r.id == recipeId);
+        if (recipe) totalCalories += recipe.calories;
+    });
+
+    document.getElementById('total-calories').textContent = totalCalories;
+    const goal = parseInt(document.getElementById('calorie-goal').value);
+    const progress = document.getElementById('calorie-progress');
+    progress.max = goal;
+    progress.value = Math.min(totalCalories, goal);
+}
+
+// Generate grocery list
+function generateGroceryList() {
+    const plan = loadMealPlan();
+    const ingredients = new Set();
+
+    Object.values(plan).forEach(dayPlan => {
+        Object.values(dayPlan).forEach(recipeId => {
+            const recipe = recipes.find(r => r.id == recipeId);
+            if (recipe) {
+                recipe.ingredients.forEach(ing => ingredients.add(ing));
+            }
+        });
+    });
+
+    const listElement = document.getElementById('grocery-items');
+    listElement.innerHTML = '';
+    ingredients.forEach(ing => {
+        const li = document.createElement('li');
+        li.textContent = ing;
+        listElement.appendChild(li);
+    });
+}
+
+// Clear grocery list
+function clearGroceryList() {
+    document.getElementById('grocery-items').innerHTML = '';
+}
+
+// Display recipes
+function displayRecipes() {
+    const grid = document.getElementById('recipes-grid');
+    grid.innerHTML = '';
+
+    recipes.forEach(recipe => {
+        const card = document.createElement('div');
+        card.className = 'recipe-card';
+        card.innerHTML = `
+            <h3>${recipe.name}</h3>
+            <p>Calories: ${recipe.calories}</p>
+            <p>Ingredients: ${recipe.ingredients.join(', ')}</p>
+            <button class="add-to-meal-btn" data-recipe-id="${recipe.id}" data-category="${recipe.category}">Add to Meal</button>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    populateRecipeSelects();
+    updateMealPlanDisplay();
+    displayRecipes();
+
+    // Day selector
+    document.querySelectorAll('.day-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentDay = this.dataset.day;
+            updateMealPlanDisplay();
+        });
+    });
+
+    // Add recipe buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('add-recipe-btn')) {
+            const slot = e.target.closest('.meal-slot');
+            const meal = slot.dataset.meal;
+            const select = slot.querySelector('.recipe-select');
+            const recipeId = select.value;
+            if (recipeId) {
+                addRecipeToPlan(meal, recipeId);
+            }
+        }
+
+        if (e.target.classList.contains('add-to-meal-btn')) {
+            const recipeId = e.target.dataset.recipeId;
+            const category = e.target.dataset.category;
+            addRecipeToPlan(category, recipeId);
+        }
+    });
+
+    // Grocery list buttons
+    document.getElementById('generate-list-btn').addEventListener('click', generateGroceryList);
+    document.getElementById('clear-list-btn').addEventListener('click', clearGroceryList);
+
+    // Calorie goal change
+    document.getElementById('calorie-goal').addEventListener('input', updateCalorieTracker);
+
+    // Update auth navbar
+    updateAuthNavbar();
+});
+// Reminders & Notifications JavaScript
+
+// Load reminders from localStorage
+function loadReminders() {
+    return JSON.parse(localStorage.getItem('reminders') || '[]');
+}
+
+// Save reminders to localStorage
+function saveReminders(reminders) {
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+}
+
+// Request notification permission
+function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+// Schedule notification
+function scheduleNotification(reminder) {
+    const now = new Date();
+    const reminderTime = new Date(`${reminder.date}T${reminder.time}`);
+    const delay = reminderTime - now;
+
+    if (delay > 0) {
+        setTimeout(() => {
+            showNotification(reminder);
+        }, delay);
+    }
+}
+
+// Show notification
+function showNotification(reminder) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(`Reminder: ${reminder.title}`, {
+            body: reminder.notes || 'Time for your reminder!',
+            icon: 'favicon.ico' // Add if you have an icon
+        });
+    } else {
+        alert(`Reminder: ${reminder.title}\n${reminder.notes || 'Time for your reminder!'}`);
+    }
+}
+
+// Add reminder
+function addReminder(type, title, date, time, notes) {
+    const reminders = loadReminders();
+    const reminder = {
+        id: Date.now(),
+        type,
+        title,
+        date,
+        time,
+        notes,
+        created: new Date().toISOString()
+    };
+    reminders.push(reminder);
+    saveReminders(reminders);
+    scheduleNotification(reminder);
+    displayReminders();
+}
+
+// Delete reminder
+function deleteReminder(id) {
+    const reminders = loadReminders().filter(r => r.id != id);
+    saveReminders(reminders);
+    displayReminders();
+}
+
+// Display reminders
+function displayReminders() {
+    const reminders = loadReminders();
+    const container = document.getElementById('reminders-container');
+    container.innerHTML = '';
+
+    if (reminders.length === 0) {
+        container.innerHTML = '<p>No reminders set.</p>';
+        return;
+    }
+
+    reminders.forEach(reminder => {
+        const reminderEl = document.createElement('div');
+        reminderEl.className = 'reminder-item';
+        reminderEl.innerHTML = `
+            <div class="reminder-info">
+                <h3>${reminder.title}</h3>
+                <p><strong>Type:</strong> ${reminder.type}</p>
+                <p><strong>Date & Time:</strong> ${reminder.date} at ${reminder.time}</p>
+                ${reminder.notes ? `<p><strong>Notes:</strong> ${reminder.notes}</p>` : ''}
+            </div>
+            <button class="delete-btn" data-id="${reminder.id}">Delete</button>
+        `;
+        container.appendChild(reminderEl);
+    });
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    requestNotificationPermission();
+    displayReminders();
+
+    // Form submit
+    document.getElementById('reminder-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const type = document.getElementById('reminder-type').value;
+        const title = document.getElementById('reminder-title').value;
+        const date = document.getElementById('reminder-date').value;
+        const time = document.getElementById('reminder-time').value;
+        const notes = document.getElementById('reminder-notes').value;
+
+        addReminder(type, title, date, time, notes);
+        this.reset();
+    });
+
+    // Delete reminder
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-btn')) {
+            const id = e.target.dataset.id;
+            deleteReminder(id);
+        }
+    });
+
+    // Update auth navbar
+    updateAuthNavbar();
 });

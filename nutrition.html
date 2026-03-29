@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Planner - Women's Health & Wellness</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="animations.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-logo">Women's Health & Wellness</a>
+                <div class="nav-menu">
+                    <a href="index.html">Home</a>
+                    <a href="features.html">Features</a>
+                    <a href="nutrition.html" class="active">Nutrition</a>
+                    <a href="reminders.html">Reminders</a>
+                    <div class="nav-auth-guest" id="nav-guest">
+                        <a href="login.html" class="btn-login">Login</a>
+                        <a href="signup.html" class="btn-signup">Sign Up</a>
+                    </div>
+                    <div class="nav-auth-user" id="nav-user" style="display: none;">
+                        <div class="profile-dropdown">
+                            <button class="profile-btn" onclick="toggleProfileMenu()">Profile ▼</button>
+                            <div class="profile-menu" id="profile-menu">
+                                <a href="profile.html">View Profile</a>
+                                <a href="#" onclick="doLogout()">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="nutrition-page">
+        <section class="hero">
+            <h1>Nutrition Planner</h1>
+            <p>Plan your meals, track calories, and create grocery lists for a healthier you.</p>
+        </section>
+
+        <section class="planner-section">
+            <h2>Meal Planner</h2>
+            <div class="meal-planner">
+                <div class="day-selector">
+                    <button class="day-btn active" data-day="monday">Monday</button>
+                    <button class="day-btn" data-day="tuesday">Tuesday</button>
+                    <button class="day-btn" data-day="wednesday">Wednesday</button>
+                    <button class="day-btn" data-day="thursday">Thursday</button>
+                    <button class="day-btn" data-day="friday">Friday</button>
+                    <button class="day-btn" data-day="saturday">Saturday</button>
+                    <button class="day-btn" data-day="sunday">Sunday</button>
+                </div>
+                <div class="meals-container">
+                    <div class="meal-slot" data-meal="breakfast">
+                        <h3>Breakfast</h3>
+                        <select class="recipe-select">
+                            <option value="">Select Recipe</option>
+                        </select>
+                        <button class="add-recipe-btn">Add Recipe</button>
+                    </div>
+                    <div class="meal-slot" data-meal="lunch">
+                        <h3>Lunch</h3>
+                        <select class="recipe-select">
+                            <option value="">Select Recipe</option>
+                        </select>
+                        <button class="add-recipe-btn">Add Recipe</button>
+                    </div>
+                    <div class="meal-slot" data-meal="dinner">
+                        <h3>Dinner</h3>
+                        <select class="recipe-select">
+                            <option value="">Select Recipe</option>
+                        </select>
+                        <button class="add-recipe-btn">Add Recipe</button>
+                    </div>
+                    <div class="meal-slot" data-meal="snacks">
+                        <h3>Snacks</h3>
+                        <select class="recipe-select">
+                            <option value="">Select Recipe</option>
+                        </select>
+                        <button class="add-recipe-btn">Add Recipe</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calorie-tracker">
+            <h2>Calorie Tracker</h2>
+            <div class="tracker-display">
+                <p>Total Calories Today: <span id="total-calories">0</span></p>
+                <p>Goal: <input type="number" id="calorie-goal" value="2000" min="1000" max="5000"> kcal</p>
+                <progress id="calorie-progress" value="0" max="2000"></progress>
+            </div>
+        </section>
+
+        <section class="grocery-list">
+            <h2>Grocery List</h2>
+            <ul id="grocery-items"></ul>
+            <button id="generate-list-btn">Generate Grocery List</button>
+            <button id="clear-list-btn">Clear List</button>
+        </section>
+
+        <section class="recipes-section">
+            <h2>Recipe Suggestions</h2>
+            <div class="recipes-grid" id="recipes-grid"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Women's Health & Wellness. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

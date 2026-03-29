@@ -37,21 +37,94 @@
     <span class="brand-name">Bloom</span>
   </a>
   <ul class="nav-links" id="nav-links">
-    <li><a class="nav-link" href="#hero"      onclick="smoothNav('hero')">Home</a></li>
-    <li><a class="nav-link" href="#fitness"   onclick="smoothNav('fitness')">Fitness</a></li>
-    <li><a class="nav-link" href="#mental"    onclick="smoothNav('mental')">Mental</a></li>
-    <li><a class="nav-link" href="#hormonal"  onclick="smoothNav('hormonal')">Women's Health</a></li>
-    <li><a class="nav-link" href="#nutrition" onclick="smoothNav('nutrition')">Nutrition</a></li>
-    <li><a class="nav-link" href="#tracker"   onclick="smoothNav('tracker')">Tracker</a></li>
-    <li><a class="nav-link" href="#dashboard" onclick="smoothNav('dashboard')">Dashboard</a></li>
-    <li><a class="nav-link" href="#feed"      onclick="smoothNav('feed')">Feed</a></li>
+    <!-- HOME -->
+    <li><a class="nav-link" href="#hero" onclick="smoothNav('hero')">Home</a></li>
+    
+    <!-- FEATURES DROPDOWN -->
+    <li class="nav-dropdown">
+      <button class="nav-link nav-toggle" onclick="toggleDropdown(this)">
+        Features <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#fitness" onclick="smoothNav('fitness')">🏃 Fitness</a>
+        <a class="dropdown-item" href="#mental" onclick="smoothNav('mental')">🧘 Mental Wellness</a>
+        <a class="dropdown-item" href="#hormonal" onclick="smoothNav('hormonal')">💓 Women's Health</a>
+        <a class="dropdown-item" href="nutrition.html">🥗 Nutrition</a>
+      </div>
+    </li>
+    
+    <!-- TOOLS DROPDOWN -->
+    <li class="nav-dropdown">
+      <button class="nav-link nav-toggle" onclick="toggleDropdown(this)">
+        Tools <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#tracker" onclick="smoothNav('tracker')">📊 Tracker</a>
+        <a class="dropdown-item" href="#dashboard" onclick="smoothNav('dashboard')">📈 Dashboard</a>
+        <a class="dropdown-item" href="#calendar" onclick="smoothNav('calendar')">📅 Calendar</a>
+        <a class="dropdown-item" href="#feed" onclick="smoothNav('feed')">📰 Feed</a>
+        <a class="dropdown-item" href="reminders.html">🔔 Reminders</a>
+      </div>
+    </li>
+    
+    <!-- COMMUNITY DROPDOWN -->
+    <li class="nav-dropdown">
+      <button class="nav-link nav-toggle" onclick="toggleDropdown(this)">
+        Community <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#challenges" onclick="smoothNav('challenges')">🎯 Challenges</a>
+        <a class="dropdown-item" href="#achievements" onclick="smoothNav('achievements')">🏅 Badges</a>
+      </div>
+    </li>
+    
+    <!-- SUPPORT DROPDOWN -->
+    <li class="nav-dropdown">
+      <button class="nav-link nav-toggle" onclick="toggleDropdown(this)">
+        Support <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#helpdesk" onclick="smoothNav('helpdesk')">❓ Help Center</a>
+        <a class="dropdown-item" href="#feedback" onclick="smoothNav('feedback')">💬 Feedback</a>
+      </div>
+    </li>
+    
+    <!-- AI COACH (SPECIAL) -->
     <li><a class="nav-link nav-ai-link" href="#aichat" onclick="smoothNav('aichat')">🤖 AI Coach</a></li>
-    <li><a class="nav-link" href="#helpdesk" onclick="smoothNav('helpdesk')">Help</a></li>
-    <li><a class="nav-link" href="#feedback" onclick="smoothNav('feedback')">Feedback</a></li>
   </ul>
   <div class="nav-actions">
     <button class="dark-toggle" id="dark-btn" onclick="toggleDark()" aria-label="Toggle dark mode">�</button>
-    <button class="btn-bloom btn-sm" onclick="smoothNav('tracker')">Start Tracking</button>
+    
+    <!-- Login/Profile Section -->
+    <div id="nav-auth-guest" class="nav-auth-section">
+      <button class="btn-bloom btn-sm" onclick="window.location.href='login.html'">
+        <i class="fa-solid fa-sign-in-alt"></i> Sign In
+      </button>
+    </div>
+    
+    <div id="nav-auth-user" class="nav-auth-section hidden">
+      <button class="btn-bloom btn-sm" onclick="smoothNav('tracker')">Start Tracking</button>
+      <div class="profile-dropdown">
+        <button class="profile-menu-btn" onclick="toggleProfileMenu()" aria-label="Profile menu">
+          <span class="profile-avatar-mini" id="profile-avatar-mini">👤</span>
+          <span class="profile-name-mini" id="profile-name-mini">User</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="profile-dropdown-menu" id="profile-dropdown-menu">
+          <a href="profile.html" class="dropdown-item">
+            <i class="fa-solid fa-user-circle"></i> View Profile
+          </a>
+          <a href="index.html#dashboard" class="dropdown-item" onclick="smoothNav('dashboard')">
+            <i class="fa-solid fa-chart-line"></i> Dashboard
+          </a>
+          <hr class="dropdown-divider"/>
+          <a href="#" class="dropdown-item danger" onclick="doLogout(event)">
+            <i class="fa-solid fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>
+    </div>
+    
     <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -1022,6 +1095,222 @@
   </div>
 </section>
 
+<!-- ===== CALENDAR VIEW ===== -->
+<section id="calendar" class="section-block calendar-section">
+  <div class="container">
+    <div class="section-label reveal">Activity History</div>
+    <h2 class="section-title reveal">Your Wellness<br/><em>Calendar</em></h2>
+    <p class="section-desc reveal">Every logged day is a victory. See your full health history at a glance — color-coded by category.</p>
+
+    <div class="calendar-layout">
+      <div>
+        <!-- Calendar Card -->
+        <div class="cal-wrap reveal">
+          <div class="cal-header">
+            <button class="cal-nav-btn" onclick="calNav(-1)" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
+            <span class="cal-month-year" id="cal-month-year">Loading...</span>
+            <button class="cal-today-btn" onclick="calGoToday()">Today</button>
+            <button class="cal-nav-btn" onclick="calNav(1)" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+          <div class="cal-days-header">
+            <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div>
+            <div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div>
+            <div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div>
+            <div class="cal-day-name">Sat</div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="cal-legend">
+            <div class="cal-legend-item"><div class="cal-legend-dot cal-dot fitness"></div> Fitness</div>
+            <div class="cal-legend-item"><div class="cal-legend-dot cal-dot mood"></div> Mood</div>
+            <div class="cal-legend-item"><div class="cal-legend-dot cal-dot nutrition"></div> Nutrition</div>
+            <div class="cal-legend-item"><div class="cal-legend-dot cal-dot water"></div> Hydration</div>
+          </div>
+        </div>
+
+        <!-- Activity Heatmap -->
+        <div class="bloom-card reveal" style="margin-top:1.5rem">
+          <h3><i class="fa-solid fa-fire"></i> 12-Week Activity Heatmap</h3>
+          <p class="card-sub">Darker = more active. Build your streak and watch the color deepen.</p>
+          <div class="heatmap-wrap">
+            <div class="heatmap-months" id="heatmap-months"></div>
+            <div class="heatmap-grid" id="heatmap-grid"></div>
+          </div>
+          <div class="cal-legend" style="margin-top:0.75rem;padding:0">
+            <span style="font-size:0.72rem;color:var(--text-s)">Less</span>
+            <div style="width:12px;height:12px;border-radius:3px;background:var(--border)"></div>
+            <div style="width:12px;height:12px;border-radius:3px;background:rgba(249,168,212,0.4)"></div>
+            <div style="width:12px;height:12px;border-radius:3px;background:rgba(236,72,153,0.5)"></div>
+            <div style="width:12px;height:12px;border-radius:3px;background:rgba(168,85,247,0.6)"></div>
+            <div style="width:12px;height:12px;border-radius:3px;background:linear-gradient(135deg,var(--pink),var(--purple))"></div>
+            <span style="font-size:0.72rem;color:var(--text-s)">More</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="calendar-sidebar">
+        <!-- Day Detail -->
+        <div class="cal-detail reveal" id="cal-detail">
+          <div class="cal-detail-date" id="cal-detail-date">Select a day to view details</div>
+          <div id="cal-detail-content"><p class="cal-detail-empty">Click any day on the calendar to see your logged data for that day.</p></div>
+        </div>
+
+        <!-- Month Stats -->
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-chart-simple"></i> This Month</h3>
+          <div class="month-stats" id="month-stats">
+            <div class="ms-stat"><div class="ms-stat-num" id="ms-active-days">0</div><div class="ms-stat-label">Active Days</div></div>
+            <div class="ms-stat"><div class="ms-stat-num" id="ms-avg-score">--</div><div class="ms-stat-label">Avg Score</div></div>
+            <div class="ms-stat"><div class="ms-stat-num" id="ms-total-steps">0</div><div class="ms-stat-label">Total Steps</div></div>
+            <div class="ms-stat"><div class="ms-stat-num" id="ms-mood-logs">0</div><div class="ms-stat-label">Mood Logs</div></div>
+          </div>
+        </div>
+
+        <!-- Best Day -->
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-star"></i> Best Day This Month</h3>
+          <div id="best-day-card" style="font-size:0.88rem;color:var(--text-m)">Log more data to find your best day!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NOTIFICATIONS ===== -->
+<section id="notifications" class="section-block notif-section">
+  <div class="container">
+    <div class="section-label reveal">Reminders</div>
+    <h2 class="section-title reveal">Stay on Track<br/><em>With Smart Reminders</em></h2>
+    <p class="section-desc reveal">Let Bloom nudge you at the right moments — so healthy habits become effortless.</p>
+
+    <!-- Permission Banner -->
+    <div class="notif-permission-bar reveal" id="notif-permission-bar">
+      <div class="npb-left">
+        <div class="npb-icon">🔔</div>
+        <div class="npb-info">
+          <strong>Browser Notifications</strong>
+          <p>Enable notifications to receive wellness reminders directly in your browser.</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+        <div class="npb-status">
+          <div class="npb-dot" id="notif-status-dot"></div>
+          <span id="notif-status-text">Checking...</span>
+        </div>
+        <button class="btn-bloom btn-sm" id="notif-enable-btn" onclick="requestNotifPermission()">
+          <i class="fa-solid fa-bell"></i> Enable Notifications
+        </button>
+      </div>
+    </div>
+
+    <div class="notif-layout">
+      <!-- Reminder Settings -->
+      <div>
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-clock"></i> Daily Reminders</h3>
+          <p class="card-sub">Toggle each reminder and set your preferred time.</p>
+          <div class="reminder-cards" id="reminder-cards"></div>
+          <div style="margin-top:1.25rem;display:flex;gap:0.75rem;flex-wrap:wrap">
+            <button class="btn-test-notif" onclick="sendTestNotification()">
+              <i class="fa-solid fa-paper-plane"></i> Send Test Notification
+            </button>
+            <button class="btn-outline-bloom" onclick="saveReminderSettings()">
+              <i class="fa-solid fa-check"></i> Save Settings
+            </button>
+          </div>
+          <p id="notif-save-msg" class="form-msg"></p>
+        </div>
+
+        <!-- Notification Tips -->
+        <div class="bloom-card reveal" style="margin-top:1.5rem">
+          <h3><i class="fa-solid fa-lightbulb"></i> Why Reminders Work</h3>
+          <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem">
+            <div class="ai-item"><span>⏰</span> Consistent timing trains your brain to expect healthy habits at set times.</div>
+            <div class="ai-item"><span>📊</span> Users who set reminders log data 3× more consistently than those who don't.</div>
+            <div class="ai-item"><span>💧</span> A water reminder every 2 hours increases daily intake by 40% on average.</div>
+            <div class="ai-item"><span>😊</span> Evening mood check-ins improve emotional self-awareness within 2 weeks.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification History -->
+      <div>
+        <div class="bloom-card reveal">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <h3 style="margin-bottom:0"><i class="fa-solid fa-history"></i> Recent Notifications</h3>
+            <button class="btn-ghost-sm" onclick="clearNotifHistory()">Clear All</button>
+          </div>
+          <div class="notif-history" id="notif-history">
+            <p class="empty-hint">No notifications yet. Enable reminders above!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ACHIEVEMENTS ===== -->
+<section id="achievements" class="section-block achievements-section">
+  <div class="container">
+    <div class="section-label reveal">Gamification</div>
+    <h2 class="section-title reveal">Your Achievements<br/><em>&amp; Badges</em></h2>
+    <p class="section-desc reveal">Every healthy habit earns you points and unlocks badges. Celebrate your progress — you've earned it!</p>
+
+    <!-- Score Banner -->
+    <div class="ach-score-banner reveal">
+      <div class="asb-left">
+        <div class="asb-trophy">🏆</div>
+        <div class="asb-info">
+          <h3>Wellness Champion</h3>
+          <p>Keep logging daily to level up and unlock legendary badges</p>
+        </div>
+      </div>
+      <div class="asb-stats">
+        <div class="asb-stat"><span class="asb-stat-num" id="total-points">0</span><span class="asb-stat-label">Total Points</span></div>
+        <div class="asb-stat"><span class="asb-stat-num" id="badges-earned">0</span><span class="asb-stat-label">Badges Earned</span></div>
+        <div class="asb-stat"><span class="asb-stat-num" id="current-level">1</span><span class="asb-stat-label">Level</span></div>
+        <div class="asb-stat"><span class="asb-stat-num" id="current-streak-ach">0</span><span class="asb-stat-label">Day Streak</span></div>
+      </div>
+    </div>
+
+    <!-- Level Progress -->
+    <div class="level-progress-card reveal" style="margin-bottom:2rem">
+      <div class="lpc-header">
+        <span class="lpc-level" id="lpc-level-label">Level 1 — Seedling 🌱</span>
+        <span class="lpc-next" id="lpc-next-label">Next: Level 2</span>
+      </div>
+      <div class="lpc-bar-wrap">
+        <div class="lpc-bar"><div class="lpc-fill" id="lpc-fill" style="width:0%"></div></div>
+      </div>
+      <div class="lpc-pts-label">
+        <span id="lpc-current-pts">0 pts</span>
+        <span id="lpc-next-pts">500 pts to next level</span>
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="ach-filter-tabs reveal">
+      <button class="ach-filter-btn active" onclick="filterBadges('all',this)">🌸 All</button>
+      <button class="ach-filter-btn" onclick="filterBadges('fitness',this)">🏃‍♀️ Fitness</button>
+      <button class="ach-filter-btn" onclick="filterBadges('mental',this)">🧠 Mental</button>
+      <button class="ach-filter-btn" onclick="filterBadges('nutrition',this)">🥗 Nutrition</button>
+      <button class="ach-filter-btn" onclick="filterBadges('streak',this)">🔥 Streaks</button>
+      <button class="ach-filter-btn" onclick="filterBadges('earned',this)">✅ Earned</button>
+    </div>
+
+    <!-- Badges Grid -->
+    <div class="badges-grid reveal" id="badges-grid"></div>
+
+    <!-- Points History -->
+    <div class="bloom-card reveal" style="margin-top:1.5rem">
+      <h3><i class="fa-solid fa-coins"></i> Points History</h3>
+      <div class="points-history" id="points-history">
+        <p class="empty-hint">Start logging to earn points!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== HELP DESK ===== -->
 <section id="helpdesk" class="section-block section-alt">
   <div class="container">
@@ -1355,6 +1644,221 @@
   </div>
 </section>
 
+<!-- ===== WEEKLY CHALLENGE ===== -->
+<section id="challenges" class="section-block section-grad-a">
+  <div class="container">
+    <div class="section-label reveal">Weekly Challenge</div>
+    <h2 class="section-title reveal">This Week's<br/><em>Wellness Challenge</em></h2>
+    <p class="section-desc reveal">Small consistent challenges create extraordinary results. Complete this week's challenge and earn a badge!</p>
+
+    <div class="challenge-layout">
+      <!-- Active Challenge -->
+      <div class="bloom-card challenge-hero-card reveal">
+        <div class="chc-top">
+          <div class="chc-badge-wrap">
+            <div class="chc-badge" id="chc-badge">🏃‍♀️</div>
+            <div class="chc-badge-ring"></div>
+          </div>
+          <div class="chc-info">
+            <div class="chc-week" id="chc-week">Week 1</div>
+            <h3 id="chc-title">Loading challenge...</h3>
+            <p id="chc-desc" class="chc-desc">Loading...</p>
+            <div class="chc-meta">
+              <span class="chc-tag" id="chc-category">Fitness</span>
+              <span class="chc-tag chc-tag-diff" id="chc-diff">Beginner</span>
+              <span class="chc-tag chc-tag-pts" id="chc-pts">+50 pts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily tasks -->
+        <div class="chc-tasks" id="chc-tasks"></div>
+
+        <!-- Progress -->
+        <div class="chc-progress-wrap">
+          <div class="chc-progress-label">
+            <span>Weekly Progress</span>
+            <span id="chc-progress-pct">0%</span>
+          </div>
+          <div class="chc-progress-bar-bg">
+            <div class="chc-progress-bar" id="chc-progress-bar"></div>
+          </div>
+          <div class="chc-days-row" id="chc-days-row"></div>
+        </div>
+
+        <div class="chc-actions">
+          <button class="btn-bloom" onclick="logChallengeDay()" id="chc-log-btn">
+            <i class="fa-solid fa-check"></i> Mark Today Complete
+          </button>
+          <button class="btn-outline-bloom" onclick="nextChallenge()">
+            <i class="fa-solid fa-forward"></i> Next Challenge
+          </button>
+        </div>
+        <p id="chc-msg" class="form-msg" style="text-align:center"></p>
+      </div>
+
+      <!-- Challenge History + Leaderboard -->
+      <div class="challenge-sidebar">
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-trophy"></i> Your Challenge Stats</h3>
+          <div class="chs-stats">
+            <div class="chs-stat"><span id="chs-completed">0</span><small>Completed</small></div>
+            <div class="chs-stat"><span id="chs-streak">0</span><small>Week Streak</small></div>
+            <div class="chs-stat"><span id="chs-points">0</span><small>Total Points</small></div>
+          </div>
+        </div>
+
+        <div class="bloom-card reveal">
+          <h3><i class="fa-solid fa-list-check"></i> All Challenges</h3>
+          <div id="challenge-list" class="challenge-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CALENDAR VIEW ===== -->
+<section id="calendar" class="section-block">
+  <div class="container">
+    <div class="section-label reveal">Calendar</div>
+    <h2 class="section-title reveal">Your Wellness<br/><em>Calendar</em></h2>
+    <p class="section-desc reveal">See every day you've logged data. Tap any date to view your full health snapshot for that day.</p>
+
+    <div class="calendar-layout reveal">
+      <!-- Calendar Grid -->
+      <div class="bloom-card calendar-card">
+        <div class="cal-header">
+          <button class="cal-nav-btn" onclick="calPrevMonth()" aria-label="Previous month">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <div class="cal-month-year" id="cal-month-year">Loading...</div>
+          <button class="cal-nav-btn" onclick="calNextMonth()" aria-label="Next month">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+        <div class="cal-weekdays">
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
+          <span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legend">
+          <div class="cal-leg-item"><div class="cal-dot cal-dot-full"></div> Full log</div>
+          <div class="cal-leg-item"><div class="cal-dot cal-dot-partial"></div> Partial log</div>
+          <div class="cal-leg-item"><div class="cal-dot cal-dot-mood"></div> Mood only</div>
+          <div class="cal-leg-item"><div class="cal-dot cal-dot-today"></div> Today</div>
+        </div>
+      </div>
+
+      <!-- Day Detail Panel -->
+      <div class="bloom-card cal-detail-card" id="cal-detail">
+        <div class="cal-detail-empty" id="cal-detail-empty">
+          <span>📅</span>
+          <p>Tap any date to see your wellness data for that day</p>
+        </div>
+        <div class="cal-detail-content hidden" id="cal-detail-content">
+          <div class="cdd-date" id="cdd-date"></div>
+          <div class="cdd-score-row">
+            <div class="cdd-score" id="cdd-score">--</div>
+            <div class="cdd-score-label">Wellness Score</div>
+          </div>
+          <div class="cdd-items" id="cdd-items"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ACHIEVEMENTS ===== -->
+<section id="achievements" class="section-block section-grad-b">
+  <div class="container">
+    <div class="section-label reveal">Achievements</div>
+    <h2 class="section-title reveal">Your Badges &<br/><em>Achievements</em></h2>
+    <p class="section-desc reveal">Every healthy habit earns you recognition. Collect badges, level up, and celebrate your wellness wins.</p>
+
+    <!-- Level & XP bar -->
+    <div class="bloom-card level-card reveal">
+      <div class="level-left">
+        <div class="level-badge" id="level-badge">🌱</div>
+        <div class="level-info">
+          <div class="level-name" id="level-name">Seedling</div>
+          <div class="level-xp-label">Level <span id="level-num">1</span></div>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-xp-row">
+          <span id="level-xp-cur">0</span> / <span id="level-xp-next">100</span> XP
+        </div>
+        <div class="level-xp-bar-bg">
+          <div class="level-xp-bar" id="level-xp-bar"></div>
+        </div>
+        <div class="level-next-label">Next: <span id="level-next-name">Sprout</span></div>
+      </div>
+    </div>
+
+    <!-- Badge filter -->
+    <div class="badge-filter reveal">
+      <button class="badge-filter-btn active" onclick="filterBadges('all',this)">All</button>
+      <button class="badge-filter-btn" onclick="filterBadges('fitness',this)">🏃‍♀️ Fitness</button>
+      <button class="badge-filter-btn" onclick="filterBadges('mental',this)">🧠 Mental</button>
+      <button class="badge-filter-btn" onclick="filterBadges('nutrition',this)">🥗 Nutrition</button>
+      <button class="badge-filter-btn" onclick="filterBadges('hydration',this)">💧 Hydration</button>
+      <button class="badge-filter-btn" onclick="filterBadges('streak',this)">🔥 Streaks</button>
+      <button class="badge-filter-btn" onclick="filterBadges('special',this)">✨ Special</button>
+    </div>
+
+    <!-- Badges grid -->
+    <div class="badges-grid reveal stagger-children" id="badges-grid"></div>
+  </div>
+</section>
+
+<!-- ===== NOTIFICATIONS ===== -->
+<section id="notifications" class="section-block">
+  <div class="container">
+    <div class="section-label reveal">Reminders</div>
+    <h2 class="section-title reveal">Browser<br/><em>Notifications</em></h2>
+    <p class="section-desc reveal">Set smart wellness reminders that keep you on track — right in your browser, no app needed.</p>
+
+    <div class="notif-layout">
+      <!-- Permission + Status -->
+      <div class="bloom-card notif-status-card reveal">
+        <div class="ns-icon" id="ns-icon">🔔</div>
+        <h3 id="ns-title">Enable Wellness Reminders</h3>
+        <p id="ns-desc" class="card-sub">Allow browser notifications to receive daily wellness reminders, hydration nudges, and challenge updates.</p>
+        <div class="ns-status" id="ns-status">
+          <div class="ns-dot" id="ns-dot"></div>
+          <span id="ns-status-text">Notifications not enabled</span>
+        </div>
+        <button class="btn-bloom btn-full" id="ns-btn" onclick="requestNotifPermission()">
+          <i class="fa-solid fa-bell"></i> Enable Notifications
+        </button>
+        <p id="notif-msg" class="form-msg" style="text-align:center;margin-top:0.75rem"></p>
+      </div>
+
+      <!-- Reminder Settings -->
+      <div class="bloom-card reveal">
+        <h3><i class="fa-solid fa-sliders"></i> Reminder Settings</h3>
+        <p class="card-sub">Customize when and what you get reminded about.</p>
+        <div class="reminder-list" id="reminder-settings-list"></div>
+        <button class="btn-bloom btn-full" onclick="saveReminderSettings()" style="margin-top:1rem">
+          <i class="fa-solid fa-floppy-disk"></i> Save Reminders
+        </button>
+        <p id="reminder-save-msg" class="form-msg" style="text-align:center;margin-top:0.5rem"></p>
+      </div>
+
+      <!-- Notification History -->
+      <div class="bloom-card reveal">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Notifications</h3>
+        <div id="notif-history" class="notif-history">
+          <p class="empty-hint">No notifications sent yet.</p>
+        </div>
+        <button class="btn-outline-bloom" onclick="sendTestNotif()" style="width:100%;justify-content:center;margin-top:0.75rem">
+          <i class="fa-solid fa-paper-plane"></i> Send Test Notification
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== FOOTER ===== -->
 <footer class="footer">
   <div class="footer-top">
@@ -1397,6 +1901,22 @@
     </div>
   </div>
 </footer>
+
+<!-- Achievement Toast -->
+<div id="ach-toast" class="ach-toast hidden" role="alert" aria-live="polite">
+  <div class="ach-toast-icon" id="ach-toast-icon">🏆</div>
+  <div>
+    <div class="ach-toast-title">Achievement Unlocked!</div>
+    <div class="ach-toast-name" id="ach-toast-name">--</div>
+    <div class="ach-toast-desc" id="ach-toast-desc">--</div>
+  </div>
+</div>
+
+<!-- Scroll progress bar -->
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- Floating Action Button -->
+<button class="fab" onclick="smoothNav('tracker')" data-tooltip="Log Today" aria-label="Log today's activity">✨</button>
 
 <script src="script.js"></script>
 </body>
